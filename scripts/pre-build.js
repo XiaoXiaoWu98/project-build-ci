@@ -12,8 +12,8 @@ preBuild({
     {
       name: 'prd',
       identifier: '',
+      releaseBranch: 'release'
     },
   ],
   prdAppEnv: 'prd',
-  tagEnvs: ['prd'],
 });
