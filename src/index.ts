@@ -1,5 +1,5 @@
-const chalk = require('chalk')
-const logSymbols = require('log-symbols')
+const chalk = require('chalk');
+const logSymbols = require('log-symbols');
 const path = require('path');
 const fs = require('fs');
 const yargs = require('yargs');
@@ -92,7 +92,6 @@ async function preBuild(configs) {
         ),
       );
       return;
-
     }
     // 应用版本
     try {
@@ -147,12 +146,13 @@ async function preBuild(configs) {
         answers[apps.name],
         versionIdentifier,
       );
-      if(!apps.version) {
+      if (!apps.version) {
         return;
       }
     } catch (err) {
       console.log(err);
     }
+
     // 确认版本
     const answers = await enquirer.prompt([
       {
@@ -164,10 +164,11 @@ async function preBuild(configs) {
     if (!answers) return console.log(chalk.red('取消打包'));
     if (!semver.valid(apps.version))
       return console.log(logSymbols.error, chalk.red('版本号格式错误'));
-
+    console.log('apps.version :', apps.version);
     // 修改版本号
-    await changeVersion(apps.version, apps.packageJson, packageJsonPath),
-      await git.add(apps.projectPath);
+    await changeVersion(apps.version, packageJson, packageJsonPath);
+    console.log('apps.version :', apps.version);
+    await git.add(apps.projectPath);
     await git.commit(`prebuild: v${nextVersion}`);
     await git.push('origin', releaseBranch);
     console.log(logSymbols.success, chalk.green('推送代码成功'));

@@ -180,7 +180,10 @@ async function preBuild(configs) {
       return console.log(chalk.red("\u53D6\u6D88\u6253\u5305"));
     if (!semver.valid(apps.version))
       return console.log(logSymbols.error, chalk.red("\u7248\u672C\u53F7\u683C\u5F0F\u9519\u8BEF"));
-    await changeVersion(apps.version, apps.packageJson, packageJsonPath), await git.add(apps.projectPath);
+    console.log("apps.version :", apps.version);
+    await changeVersion(apps.version, packageJson, packageJsonPath);
+    console.log("apps.version :", apps.version);
+    await git.add(apps.projectPath);
     await git.commit(`prebuild: v${nextVersion}`);
     await git.push("origin", releaseBranch);
     console.log(logSymbols.success, chalk.green("\u63A8\u9001\u4EE3\u7801\u6210\u529F"));
