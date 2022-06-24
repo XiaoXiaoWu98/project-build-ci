@@ -1,6 +1,8 @@
+var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __esm = (fn, res) => function __init() {
   return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
@@ -17,6 +19,7 @@ var __copyProps = (to, from, except, desc) => {
   }
   return to;
 };
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target, mod));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // src/branch.ts
@@ -26,7 +29,7 @@ __export(branch_exports, {
 });
 async function getCurrentBranch() {
   try {
-    const { stdout } = await (0, import_execa.execa)("git", [
+    const { stdout } = await (0, import_execa.default)("git", [
       `rev-parse`,
       "--abbrev-ref",
       "HEAD"
@@ -39,7 +42,7 @@ async function getCurrentBranch() {
 var import_execa;
 var init_branch = __esm({
   "src/branch.ts"() {
-    import_execa = require("execa");
+    import_execa = __toESM(require("execa"));
   }
 });
 

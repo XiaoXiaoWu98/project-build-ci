@@ -1,4 +1,4 @@
-import { execa } from 'execa';
+import  execa from 'execa';
 /** 获取当前分支 */
 export async function getCurrentBranch() {
   try {
