@@ -106,6 +106,7 @@ async function preBuild(configs) {
     });
   }).version(false).help().argv;
   const appEnv = args.appEnv;
+  console.log("appEnv:", appEnv);
   const envConfig = envs.find((v) => v.name === appEnv);
   const versionIdentifier = envConfig.identifier || "";
   const releaseBranch = envConfig.releaseBranch;
@@ -187,6 +188,8 @@ async function preBuild(configs) {
     await git.push(["origin", `v${nextVersion}`]);
     console.log(logSymbols.success, chalk.green("\u63A8\u9001tag\u6210\u529F"));
     return;
+  } else {
+    console.log(chalk.bgRed(`\u8BF7\u786E\u5B9A\u73AF\u5883\u5206\u652F\u540D`));
   }
 }
 exports.preBuild = preBuild;
