@@ -15,7 +15,7 @@ function nextVersion(
   releaseType = 'patch',
   identifier = '',
 ): Promise<string> {
-  return semver.default.inc(version, releaseType, identifier);
+  return semver.inc(version, releaseType, identifier);
 }
 
 // 修改 package.json 的版本号

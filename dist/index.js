@@ -57,7 +57,7 @@ var semver = require("semver");
 var simplegit = require("simple-git");
 var branch = (init_branch(), __toCommonJS(branch_exports));
 function nextVersion(version, releaseType = "patch", identifier = "") {
-  return semver.default.inc(version, releaseType, identifier);
+  return semver.inc(version, releaseType, identifier);
 }
 function changeVersion(version, pkgConfig, pkgConfigFile) {
   version = String(version).trim();
