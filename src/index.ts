@@ -77,6 +77,7 @@ async function preBuild(configs) {
     .version(false)
     .help().argv;
   const appEnv = args.appEnv;
+  console.log('appEnv:', appEnv)
   // 环境配置
   const envConfig = envs.find((v) => v.name === appEnv);
   // 版本后缀名，比如 dev 是 dev, sit 是 rc, deploy 是空的
@@ -174,6 +175,12 @@ async function preBuild(configs) {
     await git.push(['origin', `v${nextVersion}`]);
     console.log(logSymbols.success, chalk.green('推送tag成功'));
     return;
+  } else {
+    console.log(
+      chalk.bgRed(
+        `请确定环境分支名`,
+      ),
+    );
   }
 }
 exports.preBuild = preBuild;
