@@ -118,7 +118,7 @@ async function preBuild(configs) {
     try {
       const answers2 = await enquirer.prompt({
         name: apps.name,
-        message: `\u8BF7\u8F93\u5165${apps.label}\u8981\u6253\u5305\u7684\u7248\u672C[\u5F53\u524D\uFF1A${apps.packageJson.version}]`,
+        message: `\u8BF7\u8F93\u5165${apps.label}\u8981\u6253\u5305\u7684\u7248\u672C[\u5F53\u524D\uFF1A${packageJson.version}]`,
         type: "select",
         choices: function() {
           if (appEnv === prdAppEnv) {
@@ -163,6 +163,9 @@ async function preBuild(configs) {
         initial: appEnv === prdAppEnv ? "patch" : "prerelease"
       });
       apps.version = nextVersion(curVersion, answers2[apps.name], versionIdentifier);
+      if (!apps.version) {
+        return;
+      }
     } catch (err) {
       console.log(err);
     }

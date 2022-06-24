@@ -98,7 +98,7 @@ async function preBuild(configs) {
     try {
       const answers = await enquirer.prompt({
         name: apps.name,
-        message: `请输入${apps.label}要打包的版本[当前：${apps.packageJson.version}]`,
+        message: `请输入${apps.label}要打包的版本[当前：${packageJson.version}]`,
         type: 'select',
         choices: function () {
           if (appEnv === prdAppEnv) {
@@ -147,6 +147,9 @@ async function preBuild(configs) {
         answers[apps.name],
         versionIdentifier,
       );
+      if(!apps.version) {
+        return;
+      }
     } catch (err) {
       console.log(err);
     }
