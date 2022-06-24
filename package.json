@@ -1,43 +1,43 @@
 {
-  "name": "pre-build",
-  "version": "0.0.1",
-  "description": "打包项目更改版本",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "bin": {
-    "swagger-build": "./bin/index.js"
-  },
-  "scripts": {
-    "dev": "npm run build -- --watch",
-    "build": "tsup src/index.ts --dts --format cjs",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "pre-build": "node ./scripts/pre-build.js"
-  },
-  "author": "tokyo <15211420607@163.com>",
-  "license": "ISC",
-  "dependencies": {
-    "axios": "^0.27.2",
-    "chalk": "^4.1.1",
-    "commander": "^7.2.0",
-    "crypto": "^1.0.1",
-    "enquirer": "^2.3.6",
-    "execa": "5.0.1",
-    "figures": "^3.2.0",
-    "fs-extra": "^10.0.0",
-    "log-symbols": "^4.1.0",
-    "semver": "^7.3.7",
-    "simple-git": "^3.9.0",
-    "squirrelly": "^8.0.8",
-    "yargs": "^17.4.1"
-  },
-  "devDependencies": {
-    "@types/fs-extra": "^9.0.11",
-    "@types/node": "^14.14.31",
-    "@types/semver": "^7.3.9",
-    "@types/yargs": "^17.0.10",
-    "ts-node": "^10.8.1",
-    "tsup": "^6.1.2",
-    "typescript": "^4.2.2"
-  }
+    "name": "pre-build",
+    "version": "0.0.2",
+    "description": "打包项目更改版本",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "bin": {
+        "swagger-build": "./bin/index.js"
+    },
+    "scripts": {
+        "dev": "npm run build -- --watch",
+        "build": "tsup src/index.ts --dts --format cjs",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "pre-build": "node ./scripts/pre-build.js"
+    },
+    "author": "tokyo <15211420607@163.com>",
+    "license": "ISC",
+    "dependencies": {
+        "axios": "^0.27.2",
+        "chalk": "^4.1.1",
+        "commander": "^7.2.0",
+        "crypto": "^1.0.1",
+        "enquirer": "^2.3.6",
+        "execa": "5.0.1",
+        "figures": "^3.2.0",
+        "fs-extra": "^10.0.0",
+        "log-symbols": "^4.1.0",
+        "semver": "^7.3.7",
+        "simple-git": "^3.9.0",
+        "squirrelly": "^8.0.8",
+        "yargs": "^17.4.1"
+    },
+    "devDependencies": {
+        "@types/fs-extra": "^9.0.11",
+        "@types/node": "^14.14.31",
+        "@types/semver": "^7.3.9",
+        "@types/yargs": "^17.0.10",
+        "ts-node": "^10.8.1",
+        "tsup": "^6.1.2",
+        "typescript": "^4.2.2"
+    }
 }
