@@ -223,7 +223,7 @@ export async function preBuild(configs: configOptions) {
       if (dingTalk) {
         const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `
-## 🎉🎉 [${apps.name}] 打包失败 🥳 version: **${apps.version}**
+## 🎉🎉 [${apps.name}] 打包失败 😭😭 version: **${apps.version}**
 - 操作人: ${process.env.GITLAB_USER_NAME || process.env.USER}
 -原因: git提交失败
 ;`;
