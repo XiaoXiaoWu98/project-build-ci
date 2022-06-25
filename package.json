@@ -16,7 +16,7 @@
         "dev": "npm run build -- --watch",
         "build": "tsup src/index.ts --dts --format cjs",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "pre-build": "ts-node ./scripts/pre-build.js"
+        "pre-build": "ts-node ./scripts/pre-build.ts"
     },
     "author": "tokyo <15211420607@163.com>",
     "license": "ISC",
