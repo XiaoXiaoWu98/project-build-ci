@@ -1,6 +1,6 @@
 {
-    "name": "pre-build",
-    "version": "0.0.18",
+    "name": "project-build-ci",
+    "version": "0.0.1",
     "description": "打包项目更改版本",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
@@ -8,6 +8,10 @@
     "bin": {
         "swagger-build": "./bin/index.js"
     },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/FiveTokyo/project-build-ci.git"
+      },
     "scripts": {
         "dev": "npm run build -- --watch",
         "build": "tsup src/index.ts --dts --format cjs",

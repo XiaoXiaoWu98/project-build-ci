@@ -5,7 +5,6 @@
 
 
 ```ts
-// config.js
 const path = require('path');
 const { preBuild } = require('pre-build');
 
