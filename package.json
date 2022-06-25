@@ -1,6 +1,6 @@
 {
     "name": "project-build-ci",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "打包项目更改版本",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
@@ -11,7 +11,7 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/FiveTokyo/project-build-ci.git"
-      },
+    },
     "scripts": {
         "dev": "npm run build -- --watch",
         "build": "tsup src/index.ts --dts --format cjs",
