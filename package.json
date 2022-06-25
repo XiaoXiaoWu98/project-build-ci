@@ -1,9 +1,8 @@
 {
     "name": "project-build-ci",
-    "version": "0.0.1",
+    "version": "1.0.5",
     "description": "打包项目更改版本",
     "main": "./dist/index.js",
-    "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
     "bin": {
         "swagger-build": "./bin/index.js"
@@ -11,12 +10,12 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/FiveTokyo/project-build-ci.git"
-      },
+    },
     "scripts": {
         "dev": "npm run build -- --watch",
         "build": "tsup src/index.ts --dts --format cjs",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "pre-build": "node ./scripts/pre-build.js"
+        "pre-build": "ts-node ./scripts/pre-build.ts"
     },
     "author": "tokyo <15211420607@163.com>",
     "license": "ISC",

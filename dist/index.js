@@ -46,6 +46,13 @@ var init_branch = __esm({
   }
 });
 
+// src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  preBuild: () => preBuild
+});
+module.exports = __toCommonJS(src_exports);
+
 // src/dingNotify.ts
 var import_axios = __toESM(require("axios"));
 var import_crypto = __toESM(require("crypto"));
@@ -111,7 +118,7 @@ async function preBuild(configs) {
   if (diff)
     return console.log(logSymbols.error, chalk.red("\u5F53\u524D\u6709\u672A\u63D0\u4EA4\u7684\u4FEE\u6539"));
   const {
-    apps = {},
+    apps,
     dingTalk,
     envs = [
       { name: "dev", identifier: "dev" },
@@ -136,8 +143,7 @@ async function preBuild(configs) {
     });
   }).version(false).help().argv;
   const appEnv = args.appEnv;
-  console.log("appEnv:", appEnv);
-  const envConfig = envs.find((v) => v.name === appEnv);
+  const envConfig = envs.find((v) => v.name === appEnv) || {};
   const versionIdentifier = envConfig.identifier || "";
   const releaseBranch = envConfig.releaseBranch;
   if (releaseBranch) {
@@ -147,7 +153,7 @@ async function preBuild(configs) {
       return;
     }
     try {
-      const answers2 = await enquirer.prompt({
+      const selectVersion = await enquirer.prompt({
         name: apps.name,
         message: `\u8BF7\u8F93\u5165${apps.label}\u8981\u6253\u5305\u7684\u7248\u672C[\u5F53\u524D\uFF1A${packageJson.version}]`,
         type: "select",
@@ -193,12 +199,14 @@ async function preBuild(configs) {
         },
         initial: appEnv === prdAppEnv ? "patch" : "prerelease"
       });
-      apps.version = nextVersion(curVersion, answers2[apps.name], versionIdentifier);
-      if (!apps.version) {
-        return;
-      }
+      if (!selectVersion)
+        return console.log(chalk.red("\u53D6\u6D88\u6253\u5305"));
+      apps.version = await nextVersion(curVersion, selectVersion[apps.name], versionIdentifier);
     } catch (err) {
       console.log(err);
+    }
+    if (!apps.version) {
+      return;
     }
     const answers = await enquirer.prompt([
       {
@@ -246,4 +254,7 @@ async function preBuild(configs) {
     console.log(chalk.bgRed(`\u8BF7\u786E\u5B9A\u73AF\u5883\u5206\u652F\u540D`));
   }
 }
-exports.preBuild = preBuild;
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  preBuild
+});
