@@ -54,6 +54,6 @@ preBuild({
 ```
 
 ```bash
-yarn pre-build prd/sit/dev （环境名称）
+yarn pre-build prd/sit/dev （环境名称,对应envs）
 
 ```
