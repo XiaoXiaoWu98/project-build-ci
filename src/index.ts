@@ -168,14 +168,14 @@ async function preBuild(configs) {
     // 修改版本号
     await changeVersion(apps.version, packageJson, packageJsonPath);
     console.log('apps.version :', apps.version);
-    await git.add(apps.projectPath);
+    await git.add(apps.projectPath + '/*');
     await git.commit(`prebuild: v${nextVersion}`);
     console.log(logSymbols.success, chalk.green('推送代码到远程中'));
     await git.push('origin', releaseBranch);
     console.log(logSymbols.success, chalk.green('推送代码成功'));
-    const isExist = await git.show(`v${nextVersion}`);
+    // const isExist = await git.show(`v${nextVersion}`);
 
-    if (!isExist) await git.tag([`v${nextVersion}`]);
+    // if (!isExist) await git.tag([`v${nextVersion}`]);
     await git.push(['origin', `v${nextVersion}`]);
     console.log(logSymbols.success, chalk.green('推送tag成功'));
     return;
