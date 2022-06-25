@@ -164,17 +164,16 @@ async function preBuild(configs) {
     if (!answers) return console.log(chalk.red('取消打包'));
     if (!semver.valid(apps.version))
       return console.log(logSymbols.error, chalk.red('版本号格式错误'));
-    console.log('apps.version :', apps.version);
     // 修改版本号
     await changeVersion(apps.version, packageJson, packageJsonPath);
-    console.log('apps.version :', apps.version);
     await git.add(apps.projectPath + '/*');
     await git.commit(`prebuild: v${nextVersion}`);
     console.log(logSymbols.success, chalk.green('推送代码到远程中'));
+    console.log('releaseBranch:', releaseBranch)
     await git.push('origin', releaseBranch);
     console.log(logSymbols.success, chalk.green('推送代码成功'));
     // const isExist = await git.show(`v${nextVersion}`);
-
+    await git.tag([`${nextVersion}`]);
     // if (!isExist) await git.tag([`v${nextVersion}`]);
     await git.push(['origin', `v${nextVersion}`]);
     console.log(logSymbols.success, chalk.green('推送tag成功'));
