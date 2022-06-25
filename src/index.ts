@@ -170,6 +170,7 @@ async function preBuild(configs) {
     console.log('apps.version :', apps.version);
     await git.add(apps.projectPath);
     await git.commit(`prebuild: v${nextVersion}`);
+    console.log(logSymbols.success, chalk.green('推送代码到远程中'));
     await git.push('origin', releaseBranch);
     console.log(logSymbols.success, chalk.green('推送代码成功'));
     const isExist = await git.show(`v${nextVersion}`);

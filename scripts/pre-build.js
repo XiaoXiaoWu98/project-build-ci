@@ -2,6 +2,7 @@ const path = require('path');
 const { preBuild } = require('../dist/index');
 
 preBuild({
+  dingTalk: { url: '', asign: '' },
   apps: {
     label: 'pre-build',
     name: 'pre-build',
@@ -12,7 +13,7 @@ preBuild({
     {
       name: 'prd',
       identifier: '',
-      releaseBranch: 'release'
+      releaseBranch: 'release',
     },
   ],
   prdAppEnv: 'prd',
