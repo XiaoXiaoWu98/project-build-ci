@@ -199,7 +199,6 @@ async function preBuild(configs) {
         },
         initial: appEnv === prdAppEnv ? "patch" : "prerelease"
       });
-      console.log("selectVersion:", selectVersion);
       if (!selectVersion)
         return console.log(chalk.red("\u53D6\u6D88\u6253\u5305"));
       apps.version = await nextVersion(curVersion, selectVersion[apps.name], versionIdentifier);
@@ -216,7 +215,6 @@ async function preBuild(configs) {
         type: "confirm"
       }
     ]);
-    console.log("answers:", answers);
     if (!answers.confirm)
       return console.log(chalk.red("\u53D6\u6D88\u6253\u5305"));
     if (!semver.valid(apps.version))
