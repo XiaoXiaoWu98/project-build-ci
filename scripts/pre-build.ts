@@ -1,7 +1,11 @@
+import { configOptions } from "../src";
+
 const path = require('path');
+
 const { preBuild } = require('../dist/index');
 
-preBuild({
+
+const config: configOptions = {
   dingTalk: {
     url: 'https://oapi.dingtalk.com/robot/send?access_token=7b9ea47f361fac9efd844b40944d677890cf32ef8a77cee07a02c5714957624d',
     asign:
@@ -27,4 +31,6 @@ preBuild({
   ],
   //prd环境
   prdAppEnv: 'prd',
-});
+};
+
+preBuild(config);
