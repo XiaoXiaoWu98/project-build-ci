@@ -180,7 +180,7 @@ async function preBuild(configs) {
       await git.push(['origin', `${apps.version}`]);
       console.log(logSymbols.success, chalk.green('推送tag成功'));
       if (dingTalk) {
-        const url = handleUrlAsign(dingTalk.url, dingTalk.asign);
+        const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `
 ## 🎉🎉 [${apps.name}] 打包成功 🥳 version: **${apps.version}**
 - 操作人: ${process.env.GITLAB_USER_NAME || process.env.USER}
@@ -189,7 +189,7 @@ async function preBuild(configs) {
       }
     } catch (err) {
       if (dingTalk) {
-        const url = handleUrlAsign(dingTalk.url, dingTalk.asign);
+        const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `
 ## 🎉🎉 [${apps.name}] 打包失败 🥳 version: **${apps.version}**
 - 操作人: ${process.env.GITLAB_USER_NAME || process.env.USER}

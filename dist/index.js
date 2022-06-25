@@ -221,7 +221,7 @@ async function preBuild(configs) {
       await git.push(["origin", `${apps.version}`]);
       console.log(logSymbols.success, chalk.green("\u63A8\u9001tag\u6210\u529F"));
       if (dingTalk) {
-        const url = handleUrlAsign(dingTalk.url, dingTalk.asign);
+        const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `
 ## \u{1F389}\u{1F389} [${apps.name}] \u6253\u5305\u6210\u529F \u{1F973} version: **${apps.version}**
 - \u64CD\u4F5C\u4EBA: ${process.env.GITLAB_USER_NAME || process.env.USER}
@@ -229,6 +229,15 @@ async function preBuild(configs) {
         notify(url, msg, apps.description);
       }
     } catch (err) {
+      if (dingTalk) {
+        const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
+        const msg = `
+## \u{1F389}\u{1F389} [${apps.name}] \u6253\u5305\u5931\u8D25 \u{1F973} version: **${apps.version}**
+- \u64CD\u4F5C\u4EBA: ${process.env.GITLAB_USER_NAME || process.env.USER}
+-\u539F\u56E0: git\u63D0\u4EA4\u5931\u8D25
+;`;
+        notify(url, msg, apps.description);
+      }
       console.log(`\u63A8\u9001\u8FDC\u7A0B\u5931\u8D25: + ${err}`);
     }
     return;
