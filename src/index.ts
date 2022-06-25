@@ -167,7 +167,7 @@ async function preBuild(configs) {
     // 修改版本号
     await changeVersion(apps.version, packageJson, packageJsonPath);
     await git.add(apps.projectPath + '/*');
-    await git.commit(`prebuild: v${nextVersion}`);
+    await git.commit(`prebuild: v${apps.version}`);
     console.log(logSymbols.success, chalk.green('推送代码到远程中'));
     console.log('releaseBranch:', releaseBranch)
     await git.push('origin', releaseBranch);

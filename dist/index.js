@@ -182,7 +182,7 @@ async function preBuild(configs) {
       return console.log(logSymbols.error, chalk.red("\u7248\u672C\u53F7\u683C\u5F0F\u9519\u8BEF"));
     await changeVersion(apps.version, packageJson, packageJsonPath);
     await git.add(apps.projectPath + "/*");
-    await git.commit(`prebuild: v${nextVersion}`);
+    await git.commit(`prebuild: v${apps.version}`);
     console.log(logSymbols.success, chalk.green("\u63A8\u9001\u4EE3\u7801\u5230\u8FDC\u7A0B\u4E2D"));
     console.log("releaseBranch:", releaseBranch);
     await git.push("origin", releaseBranch);
