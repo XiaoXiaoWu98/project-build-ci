@@ -174,6 +174,7 @@ export async function preBuild(configs: configOptions) {
         },
         initial: appEnv === prdAppEnv ? 'patch' : 'prerelease',
       });
+      console.log('selectVersion:', selectVersion)
       if (!selectVersion) return console.log(chalk.red('取消打包'));
       apps.version = await nextVersion(
         curVersion,
@@ -195,7 +196,7 @@ export async function preBuild(configs: configOptions) {
       },
     ]);
     console.log('answers:', answers)
-    if (!answers) return console.log(chalk.red('取消打包'));
+    if (!answers.confirm) return console.log(chalk.red('取消打包'));
     if (!semver.valid(apps.version))
       return console.log(logSymbols.error, chalk.red('版本号格式错误'));
     // 修改版本号
