@@ -38,7 +38,7 @@ export async function handleUrlAsign(dingWebHook, secret) {
  * @returns
  */
 
-function notify(dingtalkWebhook, msg, title = '[打包信息]') {
+export function notify(dingtalkWebhook, msg, title = '[打包信息]') {
   return request(dingtalkWebhook, {
     msgtype: 'markdown',
     markdown: {
@@ -47,4 +47,3 @@ function notify(dingtalkWebhook, msg, title = '[打包信息]') {
     },
   });
 }
-exports.default = notify;

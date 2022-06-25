@@ -46,6 +46,35 @@ var init_branch = __esm({
   }
 });
 
+// src/dingNotify.ts
+var import_axios = __toESM(require("axios"));
+var import_crypto = __toESM(require("crypto"));
+async function request(url, options) {
+  const res = await import_axios.default.post(url, options, {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+  return res;
+}
+async function handleUrlAsign(dingWebHook, secret) {
+  var time = Date.now();
+  var stringToSign = time + "\n" + secret;
+  var base = import_crypto.default.createHmac("sha256", secret).update(stringToSign).digest("base64");
+  var sign = encodeURIComponent(base);
+  const url = dingWebHook + `&timestamp=${time}&sign=${sign}`;
+  return url;
+}
+function notify(dingtalkWebhook, msg, title = "[\u6253\u5305\u4FE1\u606F]") {
+  return request(dingtalkWebhook, {
+    msgtype: "markdown",
+    markdown: {
+      title,
+      text: msg
+    }
+  });
+}
+
 // src/index.ts
 var chalk = require("chalk");
 var logSymbols = require("log-symbols");
@@ -83,6 +112,7 @@ async function preBuild(configs) {
     return console.log(logSymbols.error, chalk.red("\u5F53\u524D\u6709\u672A\u63D0\u4EA4\u7684\u4FEE\u6539"));
   const {
     apps = {},
+    dingTalk,
     envs = [
       { name: "dev", identifier: "dev" },
       { name: "sit", identifier: "rc" },
@@ -181,15 +211,26 @@ async function preBuild(configs) {
     if (!semver.valid(apps.version))
       return console.log(logSymbols.error, chalk.red("\u7248\u672C\u53F7\u683C\u5F0F\u9519\u8BEF"));
     await changeVersion(apps.version, packageJson, packageJsonPath);
-    await git.add(apps.projectPath + "/*");
-    await git.commit(`prebuild: ${apps.version}`);
-    console.log(logSymbols.success, chalk.green("\u63A8\u9001\u4EE3\u7801\u5230\u8FDC\u7A0B\u4E2D"));
-    console.log("releaseBranch:", releaseBranch);
-    await git.push("origin", releaseBranch);
-    console.log(logSymbols.success, chalk.green("\u63A8\u9001\u4EE3\u7801\u6210\u529F"));
-    await git.tag([`${apps.version}`]);
-    await git.push(["origin", `${apps.version}`]);
-    console.log(logSymbols.success, chalk.green("\u63A8\u9001tag\u6210\u529F"));
+    try {
+      await git.add(apps.projectPath + "/*");
+      await git.commit(`prebuild: ${apps.version}`);
+      console.log(logSymbols.success, chalk.green("\u63A8\u9001\u4EE3\u7801\u5230\u8FDC\u7A0B\u4E2D"));
+      await git.push("origin", releaseBranch);
+      console.log(logSymbols.success, chalk.green("\u63A8\u9001\u4EE3\u7801\u6210\u529F"));
+      await git.tag([`${apps.version}`]);
+      await git.push(["origin", `${apps.version}`]);
+      console.log(logSymbols.success, chalk.green("\u63A8\u9001tag\u6210\u529F"));
+      if (dingTalk) {
+        const url = handleUrlAsign(dingTalk.url, dingTalk.asign);
+        const msg = `
+## \u{1F389}\u{1F389} [${apps.name}] \u6253\u5305\u6210\u529F \u{1F973} version: **${apps.version}**
+- \u64CD\u4F5C\u4EBA: ${process.env.GITLAB_USER_NAME || process.env.USER}
+;`;
+        notify(url, msg, apps.description);
+      }
+    } catch (err) {
+      console.log(`\u63A8\u9001\u8FDC\u7A0B\u5931\u8D25: + ${err}`);
+    }
     return;
   }
 }

@@ -1,3 +1,4 @@
+import { notify, handleUrlAsign } from './dingNotify';
 const chalk = require('chalk');
 const logSymbols = require('log-symbols');
 const path = require('path');
@@ -48,6 +49,7 @@ async function preBuild(configs) {
     return console.log(logSymbols.error, chalk.red('当前有未提交的修改'));
   const {
     apps = {},
+    dingTalk,
     envs = [
       { name: 'dev', identifier: 'dev' },
       { name: 'sit', identifier: 'rc' },
@@ -166,17 +168,29 @@ async function preBuild(configs) {
       return console.log(logSymbols.error, chalk.red('版本号格式错误'));
     // 修改版本号
     await changeVersion(apps.version, packageJson, packageJsonPath);
-    await git.add(apps.projectPath + '/*');
-    await git.commit(`prebuild: ${apps.version}`);
-    console.log(logSymbols.success, chalk.green('推送代码到远程中'));
-    console.log('releaseBranch:', releaseBranch)
-    await git.push('origin', releaseBranch);
-    console.log(logSymbols.success, chalk.green('推送代码成功'));
-    // const isExist = await git.show(`v${nextVersion}`);
-    await git.tag([`${apps.version}`]);
-    // if (!isExist) await git.tag([`v${nextVersion}`]);
-    await git.push(['origin', `${apps.version}`]);
-    console.log(logSymbols.success, chalk.green('推送tag成功'));
+    try {
+      await git.add(apps.projectPath + '/*');
+      await git.commit(`prebuild: ${apps.version}`);
+      console.log(logSymbols.success, chalk.green('推送代码到远程中'));
+      await git.push('origin', releaseBranch);
+      console.log(logSymbols.success, chalk.green('推送代码成功'));
+      // const isExist = await git.show(`v${nextVersion}`);
+      await git.tag([`${apps.version}`]);
+      // if (!isExist) await git.tag([`v${nextVersion}`]);
+      await git.push(['origin', `${apps.version}`]);
+      console.log(logSymbols.success, chalk.green('推送tag成功'));
+      if (dingTalk) {
+        const url = handleUrlAsign(dingTalk.url, dingTalk.asign);
+        const msg = `
+## 🎉🎉 [${apps.name}] 打包成功 🥳 version: **${apps.version}**
+- 操作人: ${process.env.GITLAB_USER_NAME || process.env.USER}
+;`;
+        notify(url, msg, apps.description);
+      }
+    } catch (err) {
+      console.log(`推送远程失败: + ${err}`);
+    }
+
     return;
   }
 }
