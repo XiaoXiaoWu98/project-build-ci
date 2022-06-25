@@ -188,7 +188,7 @@ async function preBuild(configs) {
     await git.push("origin", releaseBranch);
     console.log(logSymbols.success, chalk.green("\u63A8\u9001\u4EE3\u7801\u6210\u529F"));
     await git.tag([`${apps.version}`]);
-    await git.push(["origin", `v${nextVersion}`]);
+    await git.push(["origin", `${apps.version}`]);
     console.log(logSymbols.success, chalk.green("\u63A8\u9001tag\u6210\u529F"));
     return;
   }

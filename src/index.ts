@@ -175,7 +175,7 @@ async function preBuild(configs) {
     // const isExist = await git.show(`v${nextVersion}`);
     await git.tag([`${apps.version}`]);
     // if (!isExist) await git.tag([`v${nextVersion}`]);
-    await git.push(['origin', `v${nextVersion}`]);
+    await git.push(['origin', `${apps.version}`]);
     console.log(logSymbols.success, chalk.green('推送tag成功'));
     return;
   }
