@@ -5,7 +5,6 @@
 // yargs
 //   .command(version)
 //   .command(preBuild)
-//   // .command(uploadWeapp)
 //   .help()
 //   .alias('help', 'h')
 //   .alias('version', 'v').argv;
