@@ -97,7 +97,7 @@ async function preBuild(configs) {
     }
     // 应用版本
     try {
-      const answers = await enquirer.prompt({
+      const selectVersion = await enquirer.prompt({
         name: apps.name,
         message: `请输入${apps.label}要打包的版本[当前：${packageJson.version}]`,
         type: 'select',
@@ -143,9 +143,10 @@ async function preBuild(configs) {
         },
         initial: appEnv === prdAppEnv ? 'patch' : 'prerelease',
       });
+      if(!selectVersion)  return console.log(chalk.red('取消打包'));
       apps.version = nextVersion(
         curVersion,
-        answers[apps.name],
+        selectVersion[apps.name],
         versionIdentifier,
       );
       if (!apps.version) {
@@ -169,7 +170,7 @@ async function preBuild(configs) {
     // 修改版本号
     await changeVersion(apps.version, packageJson, packageJsonPath);
     try {
-      //以防万一
+      //package.json 版本号
       await git.add(apps.projectPath + '/*');
       await git.commit(`prebuild: ${apps.version}`);
       console.log(logSymbols.success, chalk.green('推送代码到远程中'));

@@ -107,6 +107,9 @@ function changeVersion(version, pkgConfig, pkgConfigFile) {
 }
 async function preBuild(configs) {
   const git = simplegit();
+  const diff = await git.diff();
+  if (diff)
+    return console.log(logSymbols.error, chalk.red("\u5F53\u524D\u6709\u672A\u63D0\u4EA4\u7684\u4FEE\u6539"));
   const {
     apps = {},
     dingTalk,
@@ -143,7 +146,7 @@ async function preBuild(configs) {
       return;
     }
     try {
-      const answers2 = await enquirer.prompt({
+      const selectVersion = await enquirer.prompt({
         name: apps.name,
         message: `\u8BF7\u8F93\u5165${apps.label}\u8981\u6253\u5305\u7684\u7248\u672C[\u5F53\u524D\uFF1A${packageJson.version}]`,
         type: "select",
@@ -189,7 +192,9 @@ async function preBuild(configs) {
         },
         initial: appEnv === prdAppEnv ? "patch" : "prerelease"
       });
-      apps.version = nextVersion(curVersion, answers2[apps.name], versionIdentifier);
+      if (!selectVersion)
+        return console.log(chalk.red("\u53D6\u6D88\u6253\u5305"));
+      apps.version = nextVersion(curVersion, selectVersion[apps.name], versionIdentifier);
       if (!apps.version) {
         return;
       }
