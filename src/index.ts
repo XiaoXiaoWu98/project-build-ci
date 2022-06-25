@@ -188,6 +188,15 @@ async function preBuild(configs) {
         notify(url, msg, apps.description);
       }
     } catch (err) {
+      if (dingTalk) {
+        const url = handleUrlAsign(dingTalk.url, dingTalk.asign);
+        const msg = `
+## 🎉🎉 [${apps.name}] 打包失败 🥳 version: **${apps.version}**
+- 操作人: ${process.env.GITLAB_USER_NAME || process.env.USER}
+-原因: git提交失败
+;`;
+        notify(url, msg, apps.description);
+      }
       console.log(`推送远程失败: + ${err}`);
     }
 
