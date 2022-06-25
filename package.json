@@ -1,6 +1,6 @@
 {
     "name": "pre-build",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "description": "打包项目更改版本",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
