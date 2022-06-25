@@ -42,13 +42,44 @@ function changeVersion(
   });
 }
 
-async function preBuild(configs) {
+export interface configOptions {
+  // 钉钉群机器人
+  dingTalk?: { url: string; asign: string };
+  //项目配置
+  apps: Apps;
+  //项目环境配置
+  envs: Envs[];
+  //项目生产环境
+  prdAppEnv: string;
+}
+
+interface Envs {
+  //环境名称
+  name?: string;
+  //tag后缀
+  identifier?: string;
+  //环境所在的分支代码
+  releaseBranch?: string;
+}
+
+interface Apps {
+  //标签
+  label: string;
+  //项目名字
+  name: string;
+  //项目路径
+  projectPath: string;
+  //项目版本
+  version?: string;
+}
+
+export async function preBuild(configs: configOptions) {
   const git = simplegit();
   const diff = await git.diff();
   if (diff)
     return console.log(logSymbols.error, chalk.red('当前有未提交的修改'));
   const {
-    apps = {},
+    apps,
     dingTalk,
     envs = [
       { name: 'dev', identifier: 'dev' },
@@ -80,7 +111,7 @@ async function preBuild(configs) {
     .help().argv;
   const appEnv = args.appEnv;
   // 环境配置
-  const envConfig = envs.find((v) => v.name === appEnv);
+  const envConfig: Envs = envs.find((v) => v.name === appEnv) || {};
   // 版本后缀名，比如 dev 是 dev, sit 是 rc, deploy 是空的
   const versionIdentifier = envConfig.identifier || '';
   // 检查分支是否在对应环境的发布分支
@@ -143,19 +174,18 @@ async function preBuild(configs) {
         },
         initial: appEnv === prdAppEnv ? 'patch' : 'prerelease',
       });
-      if(!selectVersion)  return console.log(chalk.red('取消打包'));
-      apps.version = nextVersion(
+      if (!selectVersion) return console.log(chalk.red('取消打包'));
+      apps.version = await nextVersion(
         curVersion,
         selectVersion[apps.name],
         versionIdentifier,
       );
-      if (!apps.version) {
-        return;
-      }
     } catch (err) {
       console.log(err);
     }
-
+    if (!apps.version) {
+      return;
+    }
     // 确认版本
     const answers = await enquirer.prompt([
       {
@@ -205,4 +235,3 @@ async function preBuild(configs) {
     return;
   }
 }
-exports.preBuild = preBuild;

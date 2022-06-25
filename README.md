@@ -9,7 +9,7 @@ const path = require('path');
 const { preBuild } = require('project-build-ci');
 
 preBuild({
-//钉钉聊天群机器人链接配置
+//钉钉聊天群机器人链接配置, 这个属性可有可无。
   dingTalk: {
     url: 'https://oapi.dingtalk.com/robot/send?access_token=7b9ea47f361fac9efd844b40944d677890cf32ef8a77cee07a02c5714957624d',
     //标签

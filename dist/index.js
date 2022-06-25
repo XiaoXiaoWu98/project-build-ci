@@ -46,6 +46,13 @@ var init_branch = __esm({
   }
 });
 
+// src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  preBuild: () => preBuild
+});
+module.exports = __toCommonJS(src_exports);
+
 // src/dingNotify.ts
 var import_axios = __toESM(require("axios"));
 var import_crypto = __toESM(require("crypto"));
@@ -111,7 +118,7 @@ async function preBuild(configs) {
   if (diff)
     return console.log(logSymbols.error, chalk.red("\u5F53\u524D\u6709\u672A\u63D0\u4EA4\u7684\u4FEE\u6539"));
   const {
-    apps = {},
+    apps,
     dingTalk,
     envs = [
       { name: "dev", identifier: "dev" },
@@ -136,7 +143,7 @@ async function preBuild(configs) {
     });
   }).version(false).help().argv;
   const appEnv = args.appEnv;
-  const envConfig = envs.find((v) => v.name === appEnv);
+  const envConfig = envs.find((v) => v.name === appEnv) || {};
   const versionIdentifier = envConfig.identifier || "";
   const releaseBranch = envConfig.releaseBranch;
   if (releaseBranch) {
@@ -194,12 +201,12 @@ async function preBuild(configs) {
       });
       if (!selectVersion)
         return console.log(chalk.red("\u53D6\u6D88\u6253\u5305"));
-      apps.version = nextVersion(curVersion, selectVersion[apps.name], versionIdentifier);
-      if (!apps.version) {
-        return;
-      }
+      apps.version = await nextVersion(curVersion, selectVersion[apps.name], versionIdentifier);
     } catch (err) {
       console.log(err);
+    }
+    if (!apps.version) {
+      return;
     }
     const answers = await enquirer.prompt([
       {
@@ -245,4 +252,7 @@ async function preBuild(configs) {
     return;
   }
 }
-exports.preBuild = preBuild;
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  preBuild
+});
