@@ -6,7 +6,7 @@
 
 ```ts
 const path = require('path');
-const { preBuild } = require('pre-build');
+const { preBuild } = require('project-build-ci');
 
 preBuild({
 //钉钉聊天群机器人链接配置
