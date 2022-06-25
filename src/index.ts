@@ -44,9 +44,9 @@ function changeVersion(
 
 async function preBuild(configs) {
   const git = simplegit();
-  // const diff = await git.diff();
-  // if (diff)
-  //   return console.log(logSymbols.error, chalk.red('当前有未提交的修改'));
+  const diff = await git.diff();
+  if (diff)
+    return console.log(logSymbols.error, chalk.red('当前有未提交的修改'));
   const {
     apps = {},
     dingTalk,
