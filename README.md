@@ -22,7 +22,7 @@ preBuild({
     name: 'project-build-ci',
     projectPath: path.join(__dirname, '../'),
   },
-  //环境名称以及对应分支名称以及tag前缀
+  //环境名称以及对应分支名称以及tag后缀
   envs: [
     {
       //环境名称
