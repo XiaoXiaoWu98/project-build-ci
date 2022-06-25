@@ -1,5 +1,6 @@
-const chalk = require('chalk')
-const logSymbols = require('log-symbols')
+import { notify, handleUrlAsign } from './dingNotify';
+const chalk = require('chalk');
+const logSymbols = require('log-symbols');
 const path = require('path');
 const fs = require('fs');
 const yargs = require('yargs');
@@ -15,7 +16,7 @@ function nextVersion(
   releaseType = 'patch',
   identifier = '',
 ): Promise<string> {
-  return semver.default.inc(version, releaseType, identifier);
+  return semver.inc(version, releaseType, identifier);
 }
 
 // 修改 package.json 的版本号
@@ -48,6 +49,7 @@ async function preBuild(configs) {
     return console.log(logSymbols.error, chalk.red('当前有未提交的修改'));
   const {
     apps = {},
+    dingTalk,
     envs = [
       { name: 'dev', identifier: 'dev' },
       { name: 'sit', identifier: 'rc' },
@@ -93,13 +95,12 @@ async function preBuild(configs) {
         ),
       );
       return;
-
     }
     // 应用版本
     try {
       const answers = await enquirer.prompt({
         name: apps.name,
-        message: `请输入${apps.label}要打包的版本[当前：${apps.packageJson.version}]`,
+        message: `请输入${apps.label}要打包的版本[当前：${packageJson.version}]`,
         type: 'select',
         choices: function () {
           if (appEnv === prdAppEnv) {
@@ -148,9 +149,13 @@ async function preBuild(configs) {
         answers[apps.name],
         versionIdentifier,
       );
+      if (!apps.version) {
+        return;
+      }
     } catch (err) {
       console.log(err);
     }
+
     // 确认版本
     const answers = await enquirer.prompt([
       {
@@ -162,18 +167,40 @@ async function preBuild(configs) {
     if (!answers) return console.log(chalk.red('取消打包'));
     if (!semver.valid(apps.version))
       return console.log(logSymbols.error, chalk.red('版本号格式错误'));
-
     // 修改版本号
-    await changeVersion(apps.version, apps.packageJson, packageJsonPath),
-      await git.add(apps.projectPath);
-    await git.commit(`prebuild: v${nextVersion}`);
-    await git.push('origin', releaseBranch);
-    console.log(logSymbols.success, chalk.green('推送代码成功'));
-    const isExist = await git.show(`v${nextVersion}`);
+    await changeVersion(apps.version, packageJson, packageJsonPath);
+    try {
+      await git.add(apps.projectPath + '/*');
+      await git.commit(`prebuild: ${apps.version}`);
+      console.log(logSymbols.success, chalk.green('推送代码到远程中'));
+      await git.push('origin', releaseBranch);
+      console.log(logSymbols.success, chalk.green('推送代码成功'));
+      // const isExist = await git.show(`v${nextVersion}`);
+      await git.tag([`${apps.version}`]);
+      // if (!isExist) await git.tag([`v${nextVersion}`]);
+      await git.push(['origin', `${apps.version}`]);
+      console.log(logSymbols.success, chalk.green('推送tag成功'));
+      if (dingTalk) {
+        const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
+        const msg = `
+## 🎉🎉 [${apps.name}] 打包成功 🥳 version: **${apps.version}**
+- 操作人: ${process.env.GITLAB_USER_NAME || process.env.USER}
+;`;
+        notify(url, msg, apps.name);
+      }
+    } catch (err) {
+      if (dingTalk) {
+        const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
+        const msg = `
+## 🎉🎉 [${apps.name}] 打包失败 🥳 version: **${apps.version}**
+- 操作人: ${process.env.GITLAB_USER_NAME || process.env.USER}
+-原因: git提交失败
+;`;
+        notify(url, msg, apps.name);
+      }
+      console.log(`推送远程失败: + ${err}`);
+    }
 
-    if (!isExist) await git.tag([`v${nextVersion}`]);
-    await git.push(['origin', `v${nextVersion}`]);
-    console.log(logSymbols.success, chalk.green('推送tag成功'));
     return;
   } else {
     console.log(
