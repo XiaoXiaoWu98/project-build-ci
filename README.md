@@ -5,8 +5,8 @@
 
 
 ```ts
+import { preBuild, configOptions } from 'project-build-ci';
 const path = require('path');
-const { preBuild } = require('project-build-ci');
 
 preBuild({
 //钉钉聊天群机器人链接配置, 这个属性可有可无。
@@ -49,7 +49,7 @@ preBuild({
 ```ts
 //package.json  scripts下面添加运行pre-build.js的环境路径
    
- "pre-build": "node ./scripts/pre-build.js"
+ "pre-build": "ts-node ./scripts/pre-build.js"
 
 ```
 
