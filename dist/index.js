@@ -215,6 +215,7 @@ async function preBuild(configs) {
         type: "confirm"
       }
     ]);
+    console.log("answers:", answers);
     if (!answers)
       return console.log(chalk.red("\u53D6\u6D88\u6253\u5305"));
     if (!semver.valid(apps.version))
@@ -241,7 +242,7 @@ async function preBuild(configs) {
       if (dingTalk) {
         const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `
-## \u{1F389}\u{1F389} [${apps.name}] \u6253\u5305\u5931\u8D25 \u{1F973} version: **${apps.version}**
+## \u{1F389}\u{1F389} [${apps.name}] \u6253\u5305\u5931\u8D25 \u{1F62D}\u{1F62D} version: **${apps.version}**
 - \u64CD\u4F5C\u4EBA: ${process.env.GITLAB_USER_NAME || process.env.USER}
 -\u539F\u56E0: git\u63D0\u4EA4\u5931\u8D25
 ;`;

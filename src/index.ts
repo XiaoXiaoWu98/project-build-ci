@@ -194,6 +194,7 @@ export async function preBuild(configs: configOptions) {
         type: 'confirm',
       },
     ]);
+    console.log('answers:', answers)
     if (!answers) return console.log(chalk.red('取消打包'));
     if (!semver.valid(apps.version))
       return console.log(logSymbols.error, chalk.red('版本号格式错误'));
