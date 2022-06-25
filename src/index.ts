@@ -44,9 +44,9 @@ function changeVersion(
 
 async function preBuild(configs) {
   const git = simplegit();
-  const diff = await git.diff();
-  if (diff)
-    return console.log(logSymbols.error, chalk.red('当前有未提交的修改'));
+  // const diff = await git.diff();
+  // if (diff)
+  //   return console.log(logSymbols.error, chalk.red('当前有未提交的修改'));
   const {
     apps = {},
     dingTalk,
@@ -169,6 +169,7 @@ async function preBuild(configs) {
     // 修改版本号
     await changeVersion(apps.version, packageJson, packageJsonPath);
     try {
+      //以防万一
       await git.add(apps.projectPath + '/*');
       await git.commit(`prebuild: ${apps.version}`);
       console.log(logSymbols.success, chalk.green('推送代码到远程中'));

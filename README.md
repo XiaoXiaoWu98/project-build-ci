@@ -1,5 +1,5 @@
 ## 描述
- 一个命令式交互打包工具。同时触发钉钉群聊天机器人发送打包信息
+ 一个命令式交互打包工具。自动更改版本号，上传tag。同时触发钉钉群聊天机器人发送打包信息
 
 ## 使用
 
@@ -18,8 +18,8 @@ preBuild({
   },
   //项目路径以及名称
   apps: {
-    label: 'pre-build',
-    name: 'pre-build',
+    label: 'project-build-ci',
+    name: 'project-build-ci',
     projectPath: path.join(__dirname, '../'),
   },
 //环境名称以及对应分支名称以及tag前缀
