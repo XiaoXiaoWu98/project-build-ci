@@ -19,6 +19,12 @@ preBuild({
       identifier: '',
       releaseBranch: 'release',
     },
+    {
+      name: 'sit',
+      identifier: '',
+      releaseBranch: 'sit',
+    },
   ],
+  //prd环境
   prdAppEnv: 'prd',
 });

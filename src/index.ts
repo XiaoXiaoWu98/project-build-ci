@@ -185,7 +185,7 @@ async function preBuild(configs) {
 ## 🎉🎉 [${apps.name}] 打包成功 🥳 version: **${apps.version}**
 - 操作人: ${process.env.GITLAB_USER_NAME || process.env.USER}
 ;`;
-        notify(url, msg, apps.description);
+        notify(url, msg, apps.name);
       }
     } catch (err) {
       if (dingTalk) {
@@ -195,7 +195,7 @@ async function preBuild(configs) {
 - 操作人: ${process.env.GITLAB_USER_NAME || process.env.USER}
 -原因: git提交失败
 ;`;
-        notify(url, msg, apps.description);
+        notify(url, msg, apps.name);
       }
       console.log(`推送远程失败: + ${err}`);
     }
