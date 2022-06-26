@@ -1,5 +1,4 @@
-import { notify, handleUrlAsign } from './dingNotify';
-import  execa from 'execa';
+import { notify, handleUrlAsign } from './dingNotify'
 
 const chalk = require('chalk')
 const logSymbols = require('log-symbols')
@@ -12,7 +11,7 @@ const semver = require('semver')
 const simplegit = require('simple-git')
 const branch = require('./branch')
 const exec = require('child_process').exec
-
+const execa = require('execa')
 
 // 计算下一个版本号
 function nextVersion(
@@ -82,8 +81,8 @@ interface Apps {
 export async function preBuild(configs: configOptions) {
     const git = simplegit()
     const diff = await git.diff()
-    if (diff)
-        return console.log(logSymbols.error, chalk.red('当前有未提交的修改'))
+    // if (diff)
+    //     return console.log(logSymbols.error, chalk.red('当前有未提交的修改'))
     const {
         apps,
         dingTalk,
@@ -228,18 +227,19 @@ export async function preBuild(configs: configOptions) {
             }
             //如果是npm包直接推送npm
             if (appEnv === prdAppEnv && envConfig.isNpm) {
-                exec('npm publish', (err, stdout, stderr) => {
-                    if (err) {
-                        console.log(chalk.bgRed(`npm包推送失败 ${err}`))
-                    } else {
-                        console.log(
-                            logSymbols.success,
-                            chalk.green(
-                                `推送npm包: ${apps.name}成功，--version: ${apps.version}`
-                            )
-                        )
-                    }
-                })
+                await execa('npm', ['publish'])
+                // exec('npm publish', (err, stdout, stderr) => {
+                //     if (err) {
+                //         console.log(chalk.bgRed(`npm包推送失败 ${err}`))
+                //     } else {
+                //         console.log(
+                //             logSymbols.success,
+                //             chalk.green(
+                //                 `推送npm包: ${apps.name}成功，--version: ${apps.version}`
+                //             )
+                //         )
+                //     }
+                // })
             }
         } catch (err) {
             if (dingTalk) {

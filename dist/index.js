@@ -93,6 +93,7 @@ var semver = require("semver");
 var simplegit = require("simple-git");
 var branch = (init_branch(), __toCommonJS(branch_exports));
 var exec = require("child_process").exec;
+var execa2 = require("execa");
 function nextVersion(version, releaseType = "patch", identifier = "") {
   return semver.inc(version, releaseType, identifier);
 }
@@ -116,8 +117,6 @@ function changeVersion(version, pkgConfig, pkgConfigFile) {
 async function preBuild(configs) {
   const git = simplegit();
   const diff = await git.diff();
-  if (diff)
-    return console.log(logSymbols.error, chalk.red("\u5F53\u524D\u6709\u672A\u63D0\u4EA4\u7684\u4FEE\u6539"));
   const {
     apps,
     dingTalk,
@@ -240,13 +239,7 @@ async function preBuild(configs) {
         notify(url, msg, apps.name);
       }
       if (appEnv === prdAppEnv && envConfig.isNpm) {
-        exec("npm publish", (err, stdout, stderr) => {
-          if (err) {
-            console.log(chalk.bgRed(`npm\u5305\u63A8\u9001\u5931\u8D25 ${err}`));
-          } else {
-            console.log(logSymbols.success, chalk.green(`\u63A8\u9001npm\u5305: ${apps.name}\u6210\u529F\uFF0C--version: ${apps.version}`));
-          }
-        });
+        await execa2("npm", ["publish"]);
       }
     } catch (err) {
       if (dingTalk) {
