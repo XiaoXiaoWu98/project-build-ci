@@ -64,7 +64,7 @@ interface Envs {
     /*! 环境所在的分支代码 */
     releaseBranch?: string
     /*! 是否是npm包 */
-    // isNpm?: boolean
+    isNpm?: boolean
 }
 
 interface Apps {
@@ -231,21 +231,21 @@ export async function preBuild(configs: configOptions) {
                 notify(url, msg, apps.name)
             }
             // //如果是npm包直接推送npm
-            // if (appEnv === prdAppEnv && envConfig.isNpm) {
-            //     // await execa('npm', ['publish'], { execPath: packageJsonPath })
-            //     exec('npm publish', (err, stdout, stderr) => {
-            //         if (err) {
-            //             console.log(chalk.bgRed(`npm包推送失败 ${err}`))
-            //         } else {
-            //             console.log(
-            //                 logSymbols.success,
-            //                 chalk.green(
-            //                     `推送npm包: ${apps.name}成功，--version: ${apps.version}`
-            //                 )
-            //             )
-            //         }
-            //     })
-            // }
+            if (appEnv === prdAppEnv && envConfig.isNpm) {
+                // await execa('npm', ['publish'], { execPath: packageJsonPath })
+                exec('npm publish', (err, stdout, stderr) => {
+                    if (err) {
+                        console.log(chalk.bgRed(`npm包推送失败 ${err}`))
+                    } else {
+                        console.log(
+                            logSymbols.success,
+                            chalk.green(
+                                `推送npm包: ${apps.name}成功，--version: ${apps.version}`
+                            )
+                        )
+                    }
+                })
+            }
         } catch (err) {
             spinner.fail(chalk.red(`推送远程失败... 😎，: + ${err}`))
             if (dingTalk) {

@@ -18,6 +18,8 @@ interface Envs {
     identifier?: string;
     /*! 环境所在的分支代码 */
     releaseBranch?: string;
+    /*! 是否是npm包 */
+    isNpm?: boolean;
 }
 interface Apps {
     /*! 标签 */
