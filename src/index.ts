@@ -81,8 +81,8 @@ interface Apps {
 export async function preBuild(configs: configOptions) {
     const git = simplegit()
     const diff = await git.diff()
-    // if (diff)
-    //     return console.log(logSymbols.error, chalk.red('当前有未提交的修改'))
+    if (diff)
+        return console.log(logSymbols.error, chalk.red('当前有未提交的修改'))
     const {
         apps,
         dingTalk,
