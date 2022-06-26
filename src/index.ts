@@ -228,18 +228,18 @@ export async function preBuild(configs: configOptions) {
             //如果是npm包直接推送npm
             if (appEnv === prdAppEnv && envConfig.isNpm) {
                 // await execa('npm', ['publish'], { execPath: packageJsonPath })
-                // exec('npm publish', (err, stdout, stderr) => {
-                //     if (err) {
-                //         console.log(chalk.bgRed(`npm包推送失败 ${err}`))
-                //     } else {
-                //         console.log(
-                //             logSymbols.success,
-                //             chalk.green(
-                //                 `推送npm包: ${apps.name}成功，--version: ${apps.version}`
-                //             )
-                //         )
-                //     }
-                // })
+                exec('npm publish', (err, stdout, stderr) => {
+                    if (err) {
+                        console.log(chalk.bgRed(`npm包推送失败 ${err}`))
+                    } else {
+                        console.log(
+                            logSymbols.success,
+                            chalk.green(
+                                `推送npm包: ${apps.name}成功，--version: ${apps.version}`
+                            )
+                        )
+                    }
+                })
             }
         } catch (err) {
             if (dingTalk) {
