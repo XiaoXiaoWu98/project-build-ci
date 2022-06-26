@@ -1,5 +1,5 @@
 {
-    "name": "project-build-ci",
+    "name": "project-build-ci222",
     "version": "0.0.10",
     "description": "打包项目更改版本",
     "main": "./dist/index.js",
