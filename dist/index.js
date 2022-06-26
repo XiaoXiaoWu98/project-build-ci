@@ -253,15 +253,6 @@ async function preBuild(configs) {
 ;`;
         notify(url, msg, apps.name);
       }
-      if (appEnv === prdAppEnv && envConfig.isNpm) {
-        exec("npm publish", (err, stdout, stderr) => {
-          if (err) {
-            console.log(chalk2.bgRed(`npm\u5305\u63A8\u9001\u5931\u8D25 ${err}`));
-          } else {
-            console.log(logSymbols.success, chalk2.green(`\u63A8\u9001npm\u5305: ${apps.name}\u6210\u529F\uFF0C--version: ${apps.version}`));
-          }
-        });
-      }
     } catch (err) {
       spinner.fail(chalk2.red(`\u63A8\u9001\u8FDC\u7A0B\u5931\u8D25... \u{1F60E}\uFF0C: + ${err}`));
       if (dingTalk) {
