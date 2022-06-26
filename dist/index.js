@@ -233,7 +233,7 @@ async function preBuild(configs) {
         const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `
 ## \u{1F389}\u{1F389} [${apps.name}] \u6253\u5305\u6210\u529F \u{1F973} 
-- version: **${apps.version}**
+- version: **${apps.version}**;
 - \u64CD\u4F5C\u4EBA: ${process.env.GITLAB_USER_NAME || process.env.USER}
 ;`;
         notify(url, msg, apps.name);
@@ -243,8 +243,8 @@ async function preBuild(configs) {
         const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `
 ## \u{1F389}\u{1F389} [${apps.name}] 
-- \u6253\u5305\u5931\u8D25 \u{1F62D}\u{1F62D} version: **${apps.version}**
-- \u64CD\u4F5C\u4EBA: ${process.env.GITLAB_USER_NAME || process.env.USER}
+- \u6253\u5305\u5931\u8D25 \u{1F62D}\u{1F62D} version: **${apps.version}**;
+- \u64CD\u4F5C\u4EBA: ${process.env.GITLAB_USER_NAME || process.env.USER};
 - \u539F\u56E0: git\u63D0\u4EA4\u5931\u8D25: ${err}
 ;`;
         notify(url, msg, apps.name);
