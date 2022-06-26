@@ -2,6 +2,8 @@ import axios from 'axios'
 import chalk from 'chalk'
 import crypto from 'crypto'
 
+const ora = require('ora')
+
 interface NotifyOptions {
     msgtype: string
     markdown: {
@@ -39,16 +41,20 @@ export async function handleUrlAsign(dingWebHook, secret) {
  * @returns
  */
 
-export function notify(dingtalkWebhook, msg, title = '[打包信息]') {
+export async function notify(dingtalkWebhook, msg, title = '[打包信息]') {
+    const spinner = ora()
+
+    spinner.start('正在推送二维码到钉钉群... 😎')
     try {
-        request(dingtalkWebhook, {
+        await request(dingtalkWebhook, {
             msgtype: 'markdown',
             markdown: {
                 title,
                 text: msg,
             },
         })
+        spinner.succeed(chalk.green('二维码推送成功 🥂'))
     } catch (error) {
-      console.log(chalk.bgRed(`钉钉机器人笑死推送失败 ${error}`))
+        spinner.succeed(chalk.green(`钉钉机器人消息推送失败 🥂 ${error}`))
     }
 }

@@ -57,6 +57,7 @@ module.exports = __toCommonJS(src_exports);
 var import_axios = __toESM(require("axios"));
 var import_chalk = __toESM(require("chalk"));
 var import_crypto = __toESM(require("crypto"));
+var ora = require("ora");
 async function request(url, options) {
   const res = await import_axios.default.post(url, options, {
     headers: {
@@ -73,17 +74,20 @@ async function handleUrlAsign(dingWebHook, secret) {
   const url = dingWebHook + `&timestamp=${time}&sign=${sign}`;
   return url;
 }
-function notify(dingtalkWebhook, msg, title = "[\u6253\u5305\u4FE1\u606F]") {
+async function notify(dingtalkWebhook, msg, title = "[\u6253\u5305\u4FE1\u606F]") {
+  const spinner = ora();
+  spinner.start("\u6B63\u5728\u63A8\u9001\u4E8C\u7EF4\u7801\u5230\u9489\u9489\u7FA4... \u{1F60E}");
   try {
-    request(dingtalkWebhook, {
+    await request(dingtalkWebhook, {
       msgtype: "markdown",
       markdown: {
         title,
         text: msg
       }
     });
+    spinner.succeed(import_chalk.default.green("\u4E8C\u7EF4\u7801\u63A8\u9001\u6210\u529F \u{1F942}"));
   } catch (error) {
-    console.log(import_chalk.default.bgRed(`\u9489\u9489\u673A\u5668\u4EBA\u7B11\u6B7B\u63A8\u9001\u5931\u8D25 ${error}`));
+    spinner.succeed(import_chalk.default.green(`\u9489\u9489\u673A\u5668\u4EBA\u6D88\u606F\u63A8\u9001\u5931\u8D25 \u{1F942} ${error}`));
   }
 }
 
@@ -99,7 +103,7 @@ var simplegit = require("simple-git");
 var branch = (init_branch(), __toCommonJS(branch_exports));
 var exec = require("child_process").exec;
 var execa2 = require("execa");
-var ora = require("ora");
+var ora2 = require("ora");
 function nextVersion(version, releaseType = "patch", identifier = "") {
   return semver.inc(version, releaseType, identifier);
 }
@@ -121,7 +125,7 @@ function changeVersion(version, pkgConfig, pkgConfigFile) {
   });
 }
 async function preBuild(configs) {
-  const spinner = ora();
+  const spinner = ora2();
   const git = simplegit();
   const diff = await git.diff();
   const {
