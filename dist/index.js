@@ -236,12 +236,12 @@ async function preBuild(configs) {
       await git.commit(`prebuild: ${apps.version}`);
       spinner.start("\u6B63\u5728\u63A8\u9001\u4EE3\u7801\u5230\u8FDC\u7A0B\u4E2D... \u{1F60E}");
       await git.push("origin", releaseBranch);
-      spinner.success("\u63A8\u9001\u8FDC\u7A0B\u4EE3\u7801\u6210\u529F \u{1F942}");
+      spinner.succeed("\u63A8\u9001\u8FDC\u7A0B\u4EE3\u7801\u6210\u529F \u{1F942}");
       spinner.start("\u6B63\u5728\u521B\u5EFA\u672C\u5730tag... \u{1F60E}");
       await git.tag([`${apps.version}`]);
       spinner.start("\u6B63\u5728\u63A8\u9001\u8FDC\u7A0Btag... \u{1F60E}");
       await git.push(["origin", `${apps.version}`]);
-      spinner.success("\u63A8\u9001\u8FDC\u7A0Btag\u6210\u529F \u{1F942}");
+      spinner.succeed("\u63A8\u9001\u8FDC\u7A0Btag\u6210\u529F \u{1F942}");
       if (dingTalk) {
         const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `

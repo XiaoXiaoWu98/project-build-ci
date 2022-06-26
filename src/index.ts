@@ -213,14 +213,14 @@ export async function preBuild(configs: configOptions) {
             await git.commit(`prebuild: ${apps.version}`)
             spinner.start('正在推送代码到远程中... 😎')
             await git.push('origin', releaseBranch)
-            spinner.success('推送远程代码成功 🥂')
+            spinner.succeed('推送远程代码成功 🥂')
             // const isExist = await git.show(`v${nextVersion}`);
             spinner.start('正在创建本地tag... 😎')
             await git.tag([`${apps.version}`])
             // if (!isExist) await git.tag([`v${nextVersion}`]);
             spinner.start('正在推送远程tag... 😎')
             await git.push(['origin', `${apps.version}`])
-            spinner.success('推送远程tag成功 🥂')
+            spinner.succeed('推送远程tag成功 🥂')
             if (dingTalk) {
              
                 const url = await handleUrlAsign(dingTalk.url, dingTalk.asign)
