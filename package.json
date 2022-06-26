@@ -1,6 +1,6 @@
 {
     "name": "project-build-ci",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "打包项目更改版本",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
