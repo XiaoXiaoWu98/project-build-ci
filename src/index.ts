@@ -12,7 +12,7 @@ const simplegit = require('simple-git')
 const branch = require('./branch')
 const exec = require('child_process').exec
 const execa = require('execa')
-
+const ora = require('ora')
 // 计算下一个版本号
 function nextVersion(
     version,
@@ -79,6 +79,7 @@ interface Apps {
 }
 
 export async function preBuild(configs: configOptions) {
+    const spinner = ora()
     const git = simplegit()
     const diff = await git.diff()
     // if (diff)
@@ -217,6 +218,7 @@ export async function preBuild(configs: configOptions) {
             await git.push(['origin', `${apps.version}`])
             console.log(logSymbols.success, chalk.green('推送tag成功'))
             if (dingTalk) {
+                spinner.start('正在推送二维码到钉钉群... 😎')
                 const url = await handleUrlAsign(dingTalk.url, dingTalk.asign)
                 const msg = `
 ## 🎉🎉 [${apps.name}] 打包成功 🥳 

@@ -99,6 +99,7 @@ var simplegit = require("simple-git");
 var branch = (init_branch(), __toCommonJS(branch_exports));
 var exec = require("child_process").exec;
 var execa2 = require("execa");
+var ora = require("ora");
 function nextVersion(version, releaseType = "patch", identifier = "") {
   return semver.inc(version, releaseType, identifier);
 }
@@ -120,6 +121,7 @@ function changeVersion(version, pkgConfig, pkgConfigFile) {
   });
 }
 async function preBuild(configs) {
+  const spinner = ora();
   const git = simplegit();
   const diff = await git.diff();
   const {
@@ -235,6 +237,7 @@ async function preBuild(configs) {
       await git.push(["origin", `${apps.version}`]);
       console.log(logSymbols.success, chalk2.green("\u63A8\u9001tag\u6210\u529F"));
       if (dingTalk) {
+        spinner.start("\u6B63\u5728\u63A8\u9001\u4E8C\u7EF4\u7801\u5230\u9489\u9489\u7FA4... \u{1F60E}");
         const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `
 ## \u{1F389}\u{1F389} [${apps.name}] \u6253\u5305\u6210\u529F \u{1F973} 
