@@ -92,6 +92,7 @@ var enquirer = require("enquirer");
 var semver = require("semver");
 var simplegit = require("simple-git");
 var branch = (init_branch(), __toCommonJS(branch_exports));
+var exec = require("child_process").exec;
 function nextVersion(version, releaseType = "patch", identifier = "") {
   return semver.inc(version, releaseType, identifier);
 }
@@ -237,6 +238,15 @@ async function preBuild(configs) {
 - \u64CD\u4F5C\u4EBA: ${process.env.GITLAB_USER_NAME || process.env.USER}
 ;`;
         notify(url, msg, apps.name);
+      }
+      if (appEnv === prdAppEnv && envConfig.isNpm) {
+        exec("npm publish", (err, stdout, stderr) => {
+          if (err) {
+            console.log(chalk.bgRed(`npm\u5305\u63A8\u9001\u5931\u8D25 ${err}`));
+          } else {
+            console.log(logSymbols.success, chalk.green(`\u63A8\u9001npm\u5305: ${apps.name}\u6210\u529F\uFF0C--version: ${apps.version}`));
+          }
+        });
       }
     } catch (err) {
       if (dingTalk) {
