@@ -127,6 +127,8 @@ function changeVersion(version, pkgConfig, pkgConfigFile) {
 async function preBuild(configs) {
   const git = simplegit();
   const diff = await git.diff();
+  if (diff)
+    return console.log(logSymbols.error, chalk2.red("\u5F53\u524D\u6709\u672A\u63D0\u4EA4\u7684\u4FEE\u6539"));
   const {
     apps,
     dingTalk,
