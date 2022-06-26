@@ -4,9 +4,6 @@
     "description": "打包项目更改版本",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
-    "bin": {
-        "swagger-build": "./bin/index.js"
-    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/FiveTokyo/project-build-ci.git"
