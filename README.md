@@ -35,7 +35,7 @@ preBuild({
     {
       //环境名称
       name: 'sit',
-      //tag前缀
+      //tag后缀
       identifier: '',
       //分支名称
       releaseBranch: 'sit',
