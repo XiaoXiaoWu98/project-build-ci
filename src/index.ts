@@ -79,7 +79,6 @@ interface Apps {
 }
 
 export async function preBuild(configs: configOptions) {
-    const spinner = ora()
     const git = simplegit()
     const diff = await git.diff()
     // if (diff)
@@ -205,20 +204,25 @@ export async function preBuild(configs: configOptions) {
             return console.log(logSymbols.error, chalk.red('版本号格式错误'))
         // 修改版本号
         await changeVersion(apps.version, packageJson, packageJsonPath)
+        const spinner = ora()
+
         try {
             //package.json 版本号
+
             await git.add(apps.projectPath + '/*')
             await git.commit(`prebuild: ${apps.version}`)
-            console.log(logSymbols.success, chalk.green('推送代码到远程中'))
+            spinner.start('正在推送代码到远程中... 😎')
             await git.push('origin', releaseBranch)
-            console.log(logSymbols.success, chalk.green('推送代码成功'))
+            spinner.success('推送远程代码成功 🥂')
             // const isExist = await git.show(`v${nextVersion}`);
+            spinner.start('正在创建本地tag... 😎')
             await git.tag([`${apps.version}`])
             // if (!isExist) await git.tag([`v${nextVersion}`]);
+            spinner.start('正在推送远程tag... 😎')
             await git.push(['origin', `${apps.version}`])
-            console.log(logSymbols.success, chalk.green('推送tag成功'))
+            spinner.success('推送远程tag成功 🥂')
             if (dingTalk) {
-                spinner.start('正在推送二维码到钉钉群... 😎')
+             
                 const url = await handleUrlAsign(dingTalk.url, dingTalk.asign)
                 const msg = `
 ## 🎉🎉 [${apps.name}] 打包成功 🥳 
@@ -244,6 +248,7 @@ export async function preBuild(configs: configOptions) {
                 })
             }
         } catch (err) {
+          spinner.fail(`推送远程失败... 😎，: + ${err}`)
             if (dingTalk) {
                 const url = await handleUrlAsign(dingTalk.url, dingTalk.asign)
                 const msg = `
@@ -254,7 +259,6 @@ export async function preBuild(configs: configOptions) {
 ;`
                 notify(url, msg, apps.name)
             }
-            console.log(`推送远程失败: + ${err}`)
         }
 
         return

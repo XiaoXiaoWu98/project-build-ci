@@ -125,7 +125,6 @@ function changeVersion(version, pkgConfig, pkgConfigFile) {
   });
 }
 async function preBuild(configs) {
-  const spinner = ora2();
   const git = simplegit();
   const diff = await git.diff();
   const {
@@ -231,17 +230,19 @@ async function preBuild(configs) {
     if (!semver.valid(apps.version))
       return console.log(logSymbols.error, chalk2.red("\u7248\u672C\u53F7\u683C\u5F0F\u9519\u8BEF"));
     await changeVersion(apps.version, packageJson, packageJsonPath);
+    const spinner = ora2();
     try {
       await git.add(apps.projectPath + "/*");
       await git.commit(`prebuild: ${apps.version}`);
-      console.log(logSymbols.success, chalk2.green("\u63A8\u9001\u4EE3\u7801\u5230\u8FDC\u7A0B\u4E2D"));
+      spinner.start("\u6B63\u5728\u63A8\u9001\u4EE3\u7801\u5230\u8FDC\u7A0B\u4E2D... \u{1F60E}");
       await git.push("origin", releaseBranch);
-      console.log(logSymbols.success, chalk2.green("\u63A8\u9001\u4EE3\u7801\u6210\u529F"));
+      spinner.success("\u63A8\u9001\u8FDC\u7A0B\u4EE3\u7801\u6210\u529F \u{1F942}");
+      spinner.start("\u6B63\u5728\u521B\u5EFA\u672C\u5730tag... \u{1F60E}");
       await git.tag([`${apps.version}`]);
+      spinner.start("\u6B63\u5728\u63A8\u9001\u8FDC\u7A0Btag... \u{1F60E}");
       await git.push(["origin", `${apps.version}`]);
-      console.log(logSymbols.success, chalk2.green("\u63A8\u9001tag\u6210\u529F"));
+      spinner.success("\u63A8\u9001\u8FDC\u7A0Btag\u6210\u529F \u{1F942}");
       if (dingTalk) {
-        spinner.start("\u6B63\u5728\u63A8\u9001\u4E8C\u7EF4\u7801\u5230\u9489\u9489\u7FA4... \u{1F60E}");
         const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `
 ## \u{1F389}\u{1F389} [${apps.name}] \u6253\u5305\u6210\u529F \u{1F973} 
@@ -260,6 +261,7 @@ async function preBuild(configs) {
         });
       }
     } catch (err) {
+      spinner.fail(`\u63A8\u9001\u8FDC\u7A0B\u5931\u8D25... \u{1F60E}\uFF0C: + ${err}`);
       if (dingTalk) {
         const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `
@@ -270,7 +272,6 @@ async function preBuild(configs) {
 ;`;
         notify(url, msg, apps.name);
       }
-      console.log(`\u63A8\u9001\u8FDC\u7A0B\u5931\u8D25: + ${err}`);
     }
     return;
   }
