@@ -1,3 +1,4 @@
+import execa from 'execa'
 import { notify, handleUrlAsign } from './dingNotify'
 const chalk = require('chalk')
 const logSymbols = require('log-symbols')
@@ -60,6 +61,8 @@ interface Envs {
     identifier?: string
     /*! 环境所在的分支代码 */
     releaseBranch?: string
+    /*! 是否是npm包 */
+    isNpm?: boolean
 }
 
 interface Apps {
@@ -219,6 +222,14 @@ export async function preBuild(configs: configOptions) {
 - 操作人: ${process.env.GITLAB_USER_NAME || process.env.USER}
 ;`
                 notify(url, msg, apps.name)
+            }
+            //如果是npm包直接推送npm
+            if (appEnv === prdAppEnv && envConfig.isNpm) {
+                try {
+                    await execa('npm', [`publish`])
+                } catch (error) {
+                    console.log(chalk.bgRed(`npm包推送失败 ${error}`))
+                }
             }
         } catch (err) {
             if (dingTalk) {
