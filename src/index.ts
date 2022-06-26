@@ -214,7 +214,8 @@ export async function preBuild(configs: configOptions) {
             if (dingTalk) {
                 const url = await handleUrlAsign(dingTalk.url, dingTalk.asign)
                 const msg = `
-## 🎉🎉 [${apps.name}] 打包成功 🥳 version: **${apps.version}**
+## 🎉🎉 [${apps.name}] 打包成功 🥳 
+- version: **${apps.version}**
 - 操作人: ${process.env.GITLAB_USER_NAME || process.env.USER}
 ;`
                 notify(url, msg, apps.name)
@@ -223,9 +224,10 @@ export async function preBuild(configs: configOptions) {
             if (dingTalk) {
                 const url = await handleUrlAsign(dingTalk.url, dingTalk.asign)
                 const msg = `
-## 🎉🎉 [${apps.name}] 打包失败 😭😭 version: **${apps.version}**
+## 🎉🎉 [${apps.name}] 
+- 打包失败 😭😭 version: **${apps.version}**
 - 操作人: ${process.env.GITLAB_USER_NAME || process.env.USER}
--原因: git提交失败: ${err}
+- 原因: git提交失败: ${err}
 ;`
                 notify(url, msg, apps.name)
             }
