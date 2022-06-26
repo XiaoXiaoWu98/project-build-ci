@@ -22,7 +22,6 @@ const config: configOptions = {
       name: 'prd',
       identifier: '',
       releaseBranch: 'release',
-      isNpm: true
     },
     {
       name: 'sit',
