@@ -44,7 +44,7 @@ export async function handleUrlAsign(dingWebHook, secret) {
 export async function notify(dingtalkWebhook, msg, title = '[打包信息]') {
     const spinner = ora()
 
-    spinner.start('正在推送二维码到钉钉群... 😎')
+    spinner.start('正在推送消息到钉钉群... 😎')
     try {
         await request(dingtalkWebhook, {
             msgtype: 'markdown',
@@ -53,7 +53,7 @@ export async function notify(dingtalkWebhook, msg, title = '[打包信息]') {
                 text: msg,
             },
         })
-        spinner.succeed(chalk.green('二维码推送成功 🥂'))
+        spinner.succeed(chalk.green('消息推送成功 🥂'))
     } catch (error) {
         spinner.succeed(chalk.green(`钉钉机器人消息推送失败 🥂 ${error}`))
     }

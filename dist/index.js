@@ -76,7 +76,7 @@ async function handleUrlAsign(dingWebHook, secret) {
 }
 async function notify(dingtalkWebhook, msg, title = "[\u6253\u5305\u4FE1\u606F]") {
   const spinner = ora();
-  spinner.start("\u6B63\u5728\u63A8\u9001\u4E8C\u7EF4\u7801\u5230\u9489\u9489\u7FA4... \u{1F60E}");
+  spinner.start("\u6B63\u5728\u63A8\u9001\u6D88\u606F\u5230\u9489\u9489\u7FA4... \u{1F60E}");
   try {
     await request(dingtalkWebhook, {
       msgtype: "markdown",
@@ -85,7 +85,7 @@ async function notify(dingtalkWebhook, msg, title = "[\u6253\u5305\u4FE1\u606F]"
         text: msg
       }
     });
-    spinner.succeed(import_chalk.default.green("\u4E8C\u7EF4\u7801\u63A8\u9001\u6210\u529F \u{1F942}"));
+    spinner.succeed(import_chalk.default.green("\u6D88\u606F\u63A8\u9001\u6210\u529F \u{1F942}"));
   } catch (error) {
     spinner.succeed(import_chalk.default.green(`\u9489\u9489\u673A\u5668\u4EBA\u6D88\u606F\u63A8\u9001\u5931\u8D25 \u{1F942} ${error}`));
   }
@@ -236,12 +236,12 @@ async function preBuild(configs) {
       await git.commit(`prebuild: ${apps.version}`);
       spinner.start("\u6B63\u5728\u63A8\u9001\u4EE3\u7801\u5230\u8FDC\u7A0B\u4E2D... \u{1F60E}");
       await git.push("origin", releaseBranch);
-      spinner.succeed("\u63A8\u9001\u8FDC\u7A0B\u4EE3\u7801\u6210\u529F \u{1F942}");
+      spinner.succeed(chalk2.green("\u63A8\u9001\u8FDC\u7A0B\u4EE3\u7801\u6210\u529F \u{1F942}"));
       spinner.start("\u6B63\u5728\u521B\u5EFA\u672C\u5730tag... \u{1F60E}");
       await git.tag([`${apps.version}`]);
       spinner.start("\u6B63\u5728\u63A8\u9001\u8FDC\u7A0Btag... \u{1F60E}");
       await git.push(["origin", `${apps.version}`]);
-      spinner.succeed("\u63A8\u9001\u8FDC\u7A0Btag\u6210\u529F \u{1F942}");
+      spinner.succeed(chalk2.green("\u63A8\u9001\u8FDC\u7A0Btag\u6210\u529F \u{1F942}"));
       if (dingTalk) {
         const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `
@@ -261,7 +261,7 @@ async function preBuild(configs) {
         });
       }
     } catch (err) {
-      spinner.fail(`\u63A8\u9001\u8FDC\u7A0B\u5931\u8D25... \u{1F60E}\uFF0C: + ${err}`);
+      spinner.fail(chalk2.red(`\u63A8\u9001\u8FDC\u7A0B\u5931\u8D25... \u{1F60E}\uFF0C: + ${err}`));
       if (dingTalk) {
         const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `
