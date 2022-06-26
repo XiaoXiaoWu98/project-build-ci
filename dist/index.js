@@ -239,7 +239,6 @@ async function preBuild(configs) {
         notify(url, msg, apps.name);
       }
       if (appEnv === prdAppEnv && envConfig.isNpm) {
-        await execa2("npm", ["publish"]);
       }
     } catch (err) {
       if (dingTalk) {
