@@ -55,6 +55,7 @@ module.exports = __toCommonJS(src_exports);
 
 // src/dingNotify.ts
 var import_axios = __toESM(require("axios"));
+var import_chalk = __toESM(require("chalk"));
 var import_crypto = __toESM(require("crypto"));
 async function request(url, options) {
   const res = await import_axios.default.post(url, options, {
@@ -73,17 +74,21 @@ async function handleUrlAsign(dingWebHook, secret) {
   return url;
 }
 function notify(dingtalkWebhook, msg, title = "[\u6253\u5305\u4FE1\u606F]") {
-  return request(dingtalkWebhook, {
-    msgtype: "markdown",
-    markdown: {
-      title,
-      text: msg
-    }
-  });
+  try {
+    request(dingtalkWebhook, {
+      msgtype: "markdown",
+      markdown: {
+        title,
+        text: msg
+      }
+    });
+  } catch (error) {
+    console.log(import_chalk.default.bgRed(`\u9489\u9489\u673A\u5668\u4EBA\u7B11\u6B7B\u63A8\u9001\u5931\u8D25 ${error}`));
+  }
 }
 
 // src/index.ts
-var chalk = require("chalk");
+var chalk2 = require("chalk");
 var logSymbols = require("log-symbols");
 var path = require("path");
 var fs = require("fs");
@@ -149,7 +154,7 @@ async function preBuild(configs) {
   if (releaseBranch) {
     const curBranch = await branch.getCurrentBranch();
     if (curBranch !== releaseBranch) {
-      console.log(chalk.bgRed(`\u5F53\u524D\u5206\u652F\u548C\u5F53\u524D appEnv:${appEnv} \u7684\u53D1\u5E03\u5206\u652F\u4E0D\u5339\u914D!(${curBranch}!==${releaseBranch})`));
+      console.log(chalk2.bgRed(`\u5F53\u524D\u5206\u652F\u548C\u5F53\u524D appEnv:${appEnv} \u7684\u53D1\u5E03\u5206\u652F\u4E0D\u5339\u914D!(${curBranch}!==${releaseBranch})`));
       return;
     }
     try {
@@ -200,7 +205,7 @@ async function preBuild(configs) {
         initial: appEnv === prdAppEnv ? "patch" : "prerelease"
       });
       if (!selectVersion)
-        return console.log(chalk.red("\u53D6\u6D88\u6253\u5305"));
+        return console.log(chalk2.red("\u53D6\u6D88\u6253\u5305"));
       apps.version = await nextVersion(curVersion, selectVersion[apps.name], versionIdentifier);
     } catch (err) {
       console.log(err);
@@ -216,19 +221,19 @@ async function preBuild(configs) {
       }
     ]);
     if (!answers.confirm)
-      return console.log(chalk.red("\u53D6\u6D88\u6253\u5305"));
+      return console.log(chalk2.red("\u53D6\u6D88\u6253\u5305"));
     if (!semver.valid(apps.version))
-      return console.log(logSymbols.error, chalk.red("\u7248\u672C\u53F7\u683C\u5F0F\u9519\u8BEF"));
+      return console.log(logSymbols.error, chalk2.red("\u7248\u672C\u53F7\u683C\u5F0F\u9519\u8BEF"));
     await changeVersion(apps.version, packageJson, packageJsonPath);
     try {
       await git.add(apps.projectPath + "/*");
       await git.commit(`prebuild: ${apps.version}`);
-      console.log(logSymbols.success, chalk.green("\u63A8\u9001\u4EE3\u7801\u5230\u8FDC\u7A0B\u4E2D"));
+      console.log(logSymbols.success, chalk2.green("\u63A8\u9001\u4EE3\u7801\u5230\u8FDC\u7A0B\u4E2D"));
       await git.push("origin", releaseBranch);
-      console.log(logSymbols.success, chalk.green("\u63A8\u9001\u4EE3\u7801\u6210\u529F"));
+      console.log(logSymbols.success, chalk2.green("\u63A8\u9001\u4EE3\u7801\u6210\u529F"));
       await git.tag([`${apps.version}`]);
       await git.push(["origin", `${apps.version}`]);
-      console.log(logSymbols.success, chalk.green("\u63A8\u9001tag\u6210\u529F"));
+      console.log(logSymbols.success, chalk2.green("\u63A8\u9001tag\u6210\u529F"));
       if (dingTalk) {
         const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `
