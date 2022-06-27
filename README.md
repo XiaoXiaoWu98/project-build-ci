@@ -5,10 +5,10 @@
 ## 使用
 
 ```ts
-import { preBuild, configOptions } from 'project-build-ci';
+import { projectBuild, configOptions } from 'project-build-ci';
 const path = require('path');
 
-preBuild({
+projectBuild({
   //钉钉聊天群机器人链接配置, 这个属性可有可无。
   dingTalk: {
     url: 'https://oapi.dingtalk.com/robot/send?access_token=7b9ea47f361fac9efd844b40944d677890cf32ef8a77cee07a02c5714957624d',
@@ -49,11 +49,11 @@ preBuild({
 ```ts
 //package.json  scripts下面添加运行pre-build.js的环境路径
 
- "pre-build": "ts-node ./scripts/pre-build.js"
+ "project-build": "ts-node ./scripts/project-build.js"
 
 ```
 
 ```bash
-yarn pre-build prd/sit/dev （环境名称,对应envs）
+yarn project-build prd/sit/dev （环境名称,对应envs）
 
 ```

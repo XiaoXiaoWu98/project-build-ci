@@ -49,7 +49,7 @@ var init_branch = __esm({
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
-  preBuild: () => preBuild
+  projectBuild: () => projectBuild
 });
 module.exports = __toCommonJS(src_exports);
 
@@ -124,7 +124,7 @@ function changeVersion(version, pkgConfig, pkgConfigFile) {
     });
   });
 }
-async function preBuild(configs) {
+async function projectBuild(configs) {
   const git = simplegit();
   const diff = await git.diff();
   if (diff)
@@ -271,5 +271,5 @@ async function preBuild(configs) {
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  preBuild
+  projectBuild
 });

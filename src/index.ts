@@ -78,7 +78,7 @@ interface Apps {
     version?: string
 }
 
-export async function preBuild(configs: configOptions) {
+export async function projectBuild(configs: configOptions) {
     const git = simplegit()
     const diff = await git.diff()
     if (diff)
