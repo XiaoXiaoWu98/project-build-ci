@@ -49,13 +49,15 @@ var init_branch = __esm({
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
-  preBuild: () => preBuild
+  projectBuild: () => projectBuild
 });
 module.exports = __toCommonJS(src_exports);
 
 // src/dingNotify.ts
 var import_axios = __toESM(require("axios"));
+var import_chalk = __toESM(require("chalk"));
 var import_crypto = __toESM(require("crypto"));
+var ora = require("ora");
 async function request(url, options) {
   const res = await import_axios.default.post(url, options, {
     headers: {
@@ -72,18 +74,25 @@ async function handleUrlAsign(dingWebHook, secret) {
   const url = dingWebHook + `&timestamp=${time}&sign=${sign}`;
   return url;
 }
-function notify(dingtalkWebhook, msg, title = "[\u6253\u5305\u4FE1\u606F]") {
-  return request(dingtalkWebhook, {
-    msgtype: "markdown",
-    markdown: {
-      title,
-      text: msg
-    }
-  });
+async function notify(dingtalkWebhook, msg, title = "[\u6253\u5305\u4FE1\u606F]") {
+  const spinner = ora();
+  spinner.start("\u6B63\u5728\u63A8\u9001\u6D88\u606F\u5230\u9489\u9489\u7FA4... \u{1F60E}");
+  try {
+    await request(dingtalkWebhook, {
+      msgtype: "markdown",
+      markdown: {
+        title,
+        text: msg
+      }
+    });
+    spinner.succeed(import_chalk.default.green("\u6D88\u606F\u63A8\u9001\u6210\u529F \u{1F942}"));
+  } catch (error) {
+    spinner.succeed(import_chalk.default.green(`\u9489\u9489\u673A\u5668\u4EBA\u6D88\u606F\u63A8\u9001\u5931\u8D25 \u{1F942} ${error}`));
+  }
 }
 
 // src/index.ts
-var chalk = require("chalk");
+var chalk2 = require("chalk");
 var logSymbols = require("log-symbols");
 var path = require("path");
 var fs = require("fs");
@@ -92,6 +101,9 @@ var enquirer = require("enquirer");
 var semver = require("semver");
 var simplegit = require("simple-git");
 var branch = (init_branch(), __toCommonJS(branch_exports));
+var exec = require("child_process").exec;
+var execa2 = require("execa");
+var ora2 = require("ora");
 function nextVersion(version, releaseType = "patch", identifier = "") {
   return semver.inc(version, releaseType, identifier);
 }
@@ -112,11 +124,11 @@ function changeVersion(version, pkgConfig, pkgConfigFile) {
     });
   });
 }
-async function preBuild(configs) {
+async function projectBuild(configs) {
   const git = simplegit();
   const diff = await git.diff();
   if (diff)
-    return console.log(logSymbols.error, chalk.red("\u5F53\u524D\u6709\u672A\u63D0\u4EA4\u7684\u4FEE\u6539"));
+    return console.log(logSymbols.error, chalk2.red("\u5F53\u524D\u6709\u672A\u63D0\u4EA4\u7684\u4FEE\u6539"));
   const {
     apps,
     dingTalk,
@@ -149,7 +161,7 @@ async function preBuild(configs) {
   if (releaseBranch) {
     const curBranch = await branch.getCurrentBranch();
     if (curBranch !== releaseBranch) {
-      console.log(chalk.bgRed(`\u5F53\u524D\u5206\u652F\u548C\u5F53\u524D appEnv:${appEnv} \u7684\u53D1\u5E03\u5206\u652F\u4E0D\u5339\u914D!(${curBranch}!==${releaseBranch})`));
+      console.log(chalk2.bgRed(`\u5F53\u524D\u5206\u652F\u548C\u5F53\u524D appEnv:${appEnv} \u7684\u53D1\u5E03\u5206\u652F\u4E0D\u5339\u914D!(${curBranch}!==${releaseBranch})`));
       return;
     }
     try {
@@ -200,7 +212,7 @@ async function preBuild(configs) {
         initial: appEnv === prdAppEnv ? "patch" : "prerelease"
       });
       if (!selectVersion)
-        return console.log(chalk.red("\u53D6\u6D88\u6253\u5305"));
+        return console.log(chalk2.red("\u53D6\u6D88\u6253\u5305"));
       apps.version = await nextVersion(curVersion, selectVersion[apps.name], versionIdentifier);
     } catch (err) {
       console.log(err);
@@ -215,39 +227,44 @@ async function preBuild(configs) {
         type: "confirm"
       }
     ]);
-    if (!answers)
-      return console.log(chalk.red("\u53D6\u6D88\u6253\u5305"));
+    if (!answers.confirm)
+      return console.log(chalk2.red("\u53D6\u6D88\u6253\u5305"));
     if (!semver.valid(apps.version))
-      return console.log(logSymbols.error, chalk.red("\u7248\u672C\u53F7\u683C\u5F0F\u9519\u8BEF"));
+      return console.log(logSymbols.error, chalk2.red("\u7248\u672C\u53F7\u683C\u5F0F\u9519\u8BEF"));
     await changeVersion(apps.version, packageJson, packageJsonPath);
+    const spinner = ora2();
     try {
       await git.add(apps.projectPath + "/*");
       await git.commit(`prebuild: ${apps.version}`);
-      console.log(logSymbols.success, chalk.green("\u63A8\u9001\u4EE3\u7801\u5230\u8FDC\u7A0B\u4E2D"));
+      spinner.start("\u6B63\u5728\u63A8\u9001\u4EE3\u7801\u5230\u8FDC\u7A0B\u4E2D... \u{1F60E}");
       await git.push("origin", releaseBranch);
-      console.log(logSymbols.success, chalk.green("\u63A8\u9001\u4EE3\u7801\u6210\u529F"));
+      spinner.succeed(chalk2.green("\u63A8\u9001\u8FDC\u7A0B\u4EE3\u7801\u6210\u529F \u{1F942}"));
+      spinner.start("\u6B63\u5728\u521B\u5EFA\u672C\u5730tag... \u{1F60E}");
       await git.tag([`${apps.version}`]);
+      spinner.start("\u6B63\u5728\u63A8\u9001\u8FDC\u7A0Btag... \u{1F60E}");
       await git.push(["origin", `${apps.version}`]);
-      console.log(logSymbols.success, chalk.green("\u63A8\u9001tag\u6210\u529F"));
+      spinner.succeed(chalk2.green("\u63A8\u9001\u8FDC\u7A0Btag\u6210\u529F \u{1F942}"));
       if (dingTalk) {
         const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `
-## \u{1F389}\u{1F389} [${apps.name}] \u6253\u5305\u6210\u529F \u{1F973} version: **${apps.version}**
+## \u{1F389}\u{1F389} [${apps.name}] \u6253\u5305\u6210\u529F \u{1F973} 
+- version: **${apps.version}** ;
 - \u64CD\u4F5C\u4EBA: ${process.env.GITLAB_USER_NAME || process.env.USER}
 ;`;
         notify(url, msg, apps.name);
       }
     } catch (err) {
+      spinner.fail(chalk2.red(`\u63A8\u9001\u8FDC\u7A0B\u5931\u8D25... \u{1F60E}\uFF0C: + ${err}`));
       if (dingTalk) {
         const url = await handleUrlAsign(dingTalk.url, dingTalk.asign);
         const msg = `
-## \u{1F389}\u{1F389} [${apps.name}] \u6253\u5305\u5931\u8D25 \u{1F973} version: **${apps.version}**
-- \u64CD\u4F5C\u4EBA: ${process.env.GITLAB_USER_NAME || process.env.USER}
--\u539F\u56E0: git\u63D0\u4EA4\u5931\u8D25
+## \u{1F389}\u{1F389} [${apps.name}] 
+- \u6253\u5305\u5931\u8D25 \u{1F62D}\u{1F62D} version: **${apps.version}** ;
+- \u64CD\u4F5C\u4EBA: ${process.env.GITLAB_USER_NAME || process.env.USER} ;
+- \u539F\u56E0: git\u63D0\u4EA4\u5931\u8D25: ${err}
 ;`;
         notify(url, msg, apps.name);
       }
-      console.log(`\u63A8\u9001\u8FDC\u7A0B\u5931\u8D25: + ${err}`);
     }
     return;
   } else {
@@ -256,5 +273,5 @@ async function preBuild(configs) {
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  preBuild
+  projectBuild
 });

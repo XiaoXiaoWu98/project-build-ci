@@ -29,6 +29,6 @@ interface Apps {
     /*! 项目版本 */
     version?: string;
 }
-declare function preBuild(configs: configOptions): Promise<void>;
+declare function projectBuild(configs: configOptions): Promise<void>;
 
-export { configOptions, preBuild };
+export { configOptions, projectBuild };

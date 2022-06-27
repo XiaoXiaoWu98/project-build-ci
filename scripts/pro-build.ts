@@ -2,7 +2,7 @@ import { configOptions } from "../src";
 
 const path = require('path');
 
-const { preBuild } = require('../dist/index');
+const { projectBuild } = require('../dist/index');
 
 
 const config: configOptions = {
@@ -12,8 +12,8 @@ const config: configOptions = {
       'SEC0a8309d797702dcb52783676d080b9d7961eeed3c876ea80438fcc0bd535d982',
   },
   apps: {
-    label: 'pre-build',
-    name: 'pre-build',
+    label: 'project-build-ci',
+    name: 'project-build-ci',
     projectPath: path.join(__dirname, '../'),
   },
 
@@ -33,4 +33,4 @@ const config: configOptions = {
   prdAppEnv: 'prd',
 };
 
-preBuild(config);
+projectBuild(config);
