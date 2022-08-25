@@ -1,0 +1,23 @@
+/**
+ * @author $user
+ * @date $datetime
+ * @since ${pkg.version}
+ */
+
+import React, { FC, useState, useEffect } from 'react'
+import classnames from 'classnames'
+import style from './style.module.less'
+
+export interface ${ref.DirName}Props {
+    [key: string]: any
+}
+
+const ${ref.DirName}: FC<${ref.DirName}Props> = (props) => {
+    return (
+        <div>
+        ${ref.DirName}
+        </div>
+    )
+}
+
+export default ${ref.DirName}
