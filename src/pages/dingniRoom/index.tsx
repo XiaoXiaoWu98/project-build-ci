@@ -1,44 +1,57 @@
 /**
  * @author tokyo
- * @date 2022-08-24 15:43
+ * @date 2022-08-24 15:42
  * @since 0.1.0
  */
 
 import React, { FC, useState, useEffect, useMemo } from 'react';
-// import classnames from 'classnames';
-import Table, { ColumnsType } from 'antd/lib/table';
-import { Button, message, Popconfirm, Space, Tooltip } from 'antd';
-import { deleteChefOne, getChefsList } from 'src/api/strApi/chefAction';
-import Search from 'antd/lib/input/Search';
-import ChefAction from './components/chefAction';
+import classnames from 'classnames';
+import { Button, message, Popconfirm, Space, Table, Tag, Tooltip } from 'antd';
+import DingniRoomAction from './components/dingniRoomAction';
+import { Link, useNavigate } from 'react-router-dom';
 import { tableDataAction } from 'src/common/types';
+import Search from 'antd/lib/input/Search';
+import { ColumnsType } from 'antd/lib/table';
+import {
+  deleteDingniRoomOne,
+  getDingniRoomList,
+} from 'src/api/strApi/dingniRoom';
 import style from './style.module.less';
-import { getDingniRoomList } from 'src/api/strApi/dingniRoom';
+import { getChefsList } from 'src/api/strApi/chefAction';
 
-export interface ChefProps {
+export interface DiningRoomProps {
   [key: string]: any;
 }
+interface DataType {
+  key: string;
+  name: string;
+  age: number;
+  address: string;
+  tags: string[];
+}
 
-const Chef: FC<ChefProps> = (props) => {
-  const [chefsListData, setChefsListData] = useState<StrApi.ResChefsListItem[]>(
-    [],
-  );
-
+const DiningRoom: FC<DiningRoomProps> = (props) => {
   const [dinniRoomListData, setDinniRoomListData] = useState<
     StrApi.ResDingniRoomListItem[]
   >([]);
 
-  const [isShow, setIsShow] = useState<boolean>(false);
+  const [chefsListData, setChefsListData] = useState<StrApi.ResChefsListItem[]>(
+    [],
+  );
 
   const [filter, setFilter] = useState<any>({});
 
   const [loading, setLoading] = useState<boolean>(true);
 
+  const [isShow, setIsShow] = useState<boolean>(false);
+
+  const [actionData, setActionData] = useState<StrApi.ResDingniRoomListItem>(
+    {},
+  );
+
   const [type, setType] = useState<tableDataAction>(tableDataAction.add);
 
-  const [actionData, setActionData] = useState<StrApi.ResChefsListItem>({});
-
-  const columns: ColumnsType<StrApi.ResChefsListItem> = [
+  const columns: ColumnsType<StrApi.ResDingniRoomListItem> = [
     {
       title: 'Name',
       dataIndex: 'name',
@@ -46,9 +59,9 @@ const Chef: FC<ChefProps> = (props) => {
       render: (text) => <a>{text}</a>,
     },
     {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
     },
     {
       title: 'createdAt',
@@ -56,16 +69,16 @@ const Chef: FC<ChefProps> = (props) => {
       key: 'createdAt',
     },
     {
-      title: 'dingniRoom',
-      key: 'dingniRoom',
-      dataIndex: 'dingniRoom',
-      render: (_, { dingni_rooms }) => (
+      title: 'chef',
+      key: 'chef',
+      dataIndex: 'chef',
+      render: (_, { chefs }) => (
         <>
-          {dingni_rooms?.data?.map((val, index) => {
+          {chefs?.data?.map((val, index) => {
             return (
               <span key={val.id}>
                 {val?.attributes?.name}
-                {index !== dingni_rooms?.data.length - 1 && '、'}
+                {index !== chefs?.data.length - 1 && '、'}
               </span>
             );
           })}
@@ -79,7 +92,7 @@ const Chef: FC<ChefProps> = (props) => {
         const confirm = async () => {
           setLoading(true);
           try {
-            await deleteChefOne({ id: record.id as number });
+            await deleteDingniRoomOne({ id: record.id as number });
             message.success(`${record.name}删除成功`);
             await initData();
           } catch (error) {
@@ -125,8 +138,26 @@ const Chef: FC<ChefProps> = (props) => {
   }, [filter]);
 
   const initData = async () => {
-    await getChefsLists();
     await getDingniRoomLists();
+    await getChefsLists();
+  };
+
+  const getDingniRoomLists = async () => {
+    setLoading(true);
+    try {
+      const res = await getDingniRoomList({
+        filters: filter,
+        populate: '*',
+      });
+      setDinniRoomListData(
+        res.data.map((val) => {
+          return { ...val.attributes, id: val.id };
+        }) as StrApi.ResDingniRoomListItem[],
+      );
+    } catch (error) {
+      console.log('error:', error);
+    }
+    setLoading(false);
   };
 
   const getChefsLists = async () => {
@@ -134,7 +165,6 @@ const Chef: FC<ChefProps> = (props) => {
 
     try {
       const chefsList: StrApi.ResChefsList = await getChefsList({
-        filters: filter,
         populate: '*',
       });
       setChefsListData(
@@ -153,23 +183,6 @@ const Chef: FC<ChefProps> = (props) => {
     setFilter({ name: { $contains: value } });
   };
 
-  const getDingniRoomLists = async () => {
-    setLoading(true);
-    try {
-      const res = await getDingniRoomList({
-        populate: '*',
-      });
-      setDinniRoomListData(
-        res.data.map((val) => {
-          return { ...val.attributes, id: val.id };
-        }) as StrApi.ResDingniRoomListItem[],
-      );
-    } catch (error) {
-      console.log('error:', error);
-    }
-    setLoading(false);
-  };
-
   return (
     <div>
       <div className={style.searchAdd}>
@@ -185,7 +198,7 @@ const Chef: FC<ChefProps> = (props) => {
         <Button
           type="primary"
           size="large"
-          key={'chef'}
+          key={'diningRoom'}
           onClick={() => {
             setIsShow(true);
             setActionData({});
@@ -197,24 +210,24 @@ const Chef: FC<ChefProps> = (props) => {
       </div>
 
       <Table
-        columns={columns}
         loading={loading}
+        columns={columns}
         rowKey="id"
-        dataSource={chefsListData}
+        dataSource={dinniRoomListData}
       />
 
-      <ChefAction
+      <DingniRoomAction
         type={type}
-        isShow={isShow}
         data={actionData}
-        dingniRoomList={dinniRoomListData}
         onClose={async () => {
-          await getChefsLists();
+          await getDingniRoomLists();
           setIsShow(false);
         }}
-      ></ChefAction>
+        chefList={chefsListData}
+        isShow={isShow}
+      ></DingniRoomAction>
     </div>
   );
 };
 
-export default Chef;
+export default DiningRoom;

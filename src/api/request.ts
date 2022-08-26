@@ -3,6 +3,8 @@ import { useContext } from 'react'
 import { userInfoContext } from '../App'
 import { useNavigate } from 'react-router-dom'
 import qs from 'qs'
+import { getLockr } from '../utils/localStr'
+import { message } from 'antd'
 
 const baseURL = process.env.REACT_APP_BASE_URL
 
@@ -17,7 +19,8 @@ const instance = axios.create({
 // 添加请求拦截器
 instance.interceptors.request.use(
     async (config: AxiosRequestConfig) => {
-
+        const token = await getLockr('jwt')
+        config.headers!.Authorization = `Bearer ${token}`;
         if (config.method === 'post') {
             config.data = {
                 ...config.data,
@@ -29,9 +32,9 @@ instance.interceptors.request.use(
             }
         }
         // const navigate = useNavigate()
-        console.log('info1:')
-        const info = useContext(userInfoContext)
-        console.log('info2:', info)
+        // console.log('info1:')
+        // const info = useContext(userInfoContext)
+        // console.log('info2:', info)
         return config
     },
     (err) => {
@@ -48,6 +51,28 @@ instance.interceptors.response.use(
         return Promise.reject(err)
     }
 )
+
+//请求接口弹出信息截流处理
+function throttle(fn: any, delay: number) {
+    let valid = false
+    return function (msg: string) {
+        if (!valid) {
+            //休息时间 暂不接客
+            return
+        }
+        // 工作时间，执行函数并且在间隔期内把状态位设为无效
+        valid = false
+        setTimeout(() => {
+            fn(msg)
+            valid = true;
+        }, delay)
+    }
+}
+
+function notify (msg: string) {
+    const handleErrorMessage = throttle(message.error, 2000)
+    return handleErrorMessage(msg)
+}
 
 // 错误处理
 const handleApiError = async (error: AxiosError) => {
@@ -98,10 +123,10 @@ export default async function request<T>(url: string, options: AxiosRequestConfi
         })
         .then((res: AxiosResponse) => {
             // @ts-ignore
-            return res.data?.response as T
+            return res.data as T
         })
         .catch((err: AxiosError) => {
-            // ui.notify('系统错误，请稍后重试')
+            notify(err.message || '系统错误，请稍后重试')
             handleApiError(err)
             throw err
         })

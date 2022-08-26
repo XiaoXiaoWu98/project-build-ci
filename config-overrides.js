@@ -31,20 +31,25 @@ const addCustomize = () => config => {
       }),
     )
   }
+  const index = config.resolve.plugins.find((plugin) => plugin.constructor.name === `ModuleScopePlugin`)
+    if (index) {
+      config.resolve.plugins.splice(index, 1)
+    }
   return config;
 }
 // 跨域配置
 const devServerConfig = () => config => {
+  console.log('process.env.REACT_APP_PROXY_URL:', process.env.REACT_APP_PROXY_URL)
   return {
     ...config,
     // 服务开启gzip
     compress: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:1337',
+        target: process.env.REACT_APP_PROXY_URL,
         changeOrigin: true,
         pathRewrite: {
-          '^/api': '/api',
+          '^/api': '/',
         },
       }
     }
@@ -56,9 +61,9 @@ module.exports = {
     // ...
     // 路径别名
 
-    addWebpackAlias({
-      '@': path.resolve(__dirname, '..', 'src'),
-    }),
+    // addWebpackAlias({
+    //   // '@': path.resolve(__dirname, '..', 'src'),
+    // }),
 
     //antd按需加在
 

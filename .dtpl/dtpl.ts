@@ -36,7 +36,7 @@ export default function (source: any) {
           if (/^[A-Z]/.test(rawModuleName)) {
             return false;
           }
-          if (!relativeFilePath.startsWith('src/pages/')) {
+          if (!relativeFilePath.startsWith('src/pages/' || relativeFilePath.indexOf('components') > -1)) {
             return false;
           }
           return true;

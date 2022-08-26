@@ -1,6 +1,7 @@
 import Chef from '../pages/chef';
-import DiningRoom from '../pages/diningRoom';
 import Home from '../pages/home';
+import DingniRoom from 'src/pages/dingniRoom';
+
 import { Navigate, RouteObject } from 'react-router-dom';
 
 const routes: RouteObject[] = [
@@ -9,8 +10,8 @@ const routes: RouteObject[] = [
     element: <Home />,
     children: [
       {
-        path: 'diningRoom',
-        element: <DiningRoom />,
+        path: 'dingniRoom',
+        element: <DingniRoom />,
       },
       {
         path: 'chef',
@@ -19,7 +20,5 @@ const routes: RouteObject[] = [
     ],
   },
   { path: '/', element: <Navigate to="/home" /> },
-
-  // { path: '/diningRoom', element: null }
 ];
 export default routes;
